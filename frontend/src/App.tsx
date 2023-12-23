@@ -1,4 +1,4 @@
-import {FormEvent, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import TextAreaField from "./components/TextAreaField";
 import SelectField from "./components/SelectField";
 import RangeField from "./components/RangeField";
@@ -7,12 +7,14 @@ import TextField from "./components/TextField";
 import CheckBoxField from "./components/CheckBoxField";
 
 import './App.css';
+import {useRequest} from "ahooks";
+import {LoadFromFile, Predict} from "../wailsjs/go/main/App";
 
 
 function App() {
     const [runtime, setRuntime] = useState({
         generating: false,
-        models: ["Default Model"],
+        models: "",
         current_image: 0,
         images: []
     })
@@ -48,14 +50,25 @@ function App() {
     }, [JSON.stringify(params)]);
 
 
-    const updateParams = (e:any) => setParams({
+    const updateParams = (e: any) => setParams({
         ...params,
         [e.target?.name]: e.target?.value
     });
-    const updateParamsBool = (e:any) => setParams({...params, [e.target.name]: e.target.checked});
-    const updateParamsInt = (e:any) => setParams({...params, [e.target.name]: Math.floor(parseFloat(e.target.value))});
-    const updateParamsFloat = (e:any) => setParams({...params, [e.target.name]: parseFloat(e.target.value)})
+    const updateParamsBool = (e: any) => setParams({...params, [e.target.name]: e.target.checked});
+    const updateParamsInt = (e: any) => setParams({...params, [e.target.name]: Math.floor(parseFloat(e.target.value))});
+    const updateParamsFloat = (e: any) => setParams({...params, [e.target.name]: parseFloat(e.target.value)})
 
+    const {run: loadModel, loading: loadModelLoading} = useRequest(async () => {
+        return await LoadFromFile()
+    }, {
+        manual: true
+    })
+
+    const {run: predict, loading: predictLoading, data: images} = useRequest(async (prompt: string) => {
+        return await Predict(prompt)
+    }, {
+        manual: true
+    })
 
     return <div>
         <h1 className="app-title">Stable Diffusion</h1>
@@ -81,7 +94,7 @@ function App() {
                             name={"sampler"}
                             placeholder={"Sampler Method"}
                             value={params?.sampler}
-                            onSelect={updateParamsInt}
+                            onChange={updateParamsInt}
                             options={["Euler A", "Euler", "Heun", "DPM2", "DPM++ 2S A", "DPM++ 2M", "DPM++ 2M v2", "LCM"]}
                         />
                         <RangeField
@@ -111,8 +124,8 @@ function App() {
                         <CheckBoxField
                             name="random_seed"
                             placeholder="Random seed"
-                            param={params?.random_seed}
-                            onInput={updateParamsBool}
+                            value={params?.random_seed}
+                            onChange={updateParamsBool}
                         />
                     </fieldset>
                     <fieldset className="col">
@@ -120,7 +133,7 @@ function App() {
                             name="schedule"
                             placeholder="Schedule"
                             value={params?.schedule}
-                            onSelect={updateParamsInt}
+                            onChange={updateParamsInt}
                             options={["Default", "Discrete", "Karras"]}
                         />
 
@@ -145,8 +158,8 @@ function App() {
                         <CheckBoxField
                             name={"upscale"}
                             placeholder={"Upscale"}
-                            param={params?.upscale}
-                            onInput={updateParamsBool}
+                            value={params?.upscale}
+                            onChange={updateParamsBool}
                         />
                         <RangeField
                             name="batch_count"
@@ -163,20 +176,27 @@ function App() {
             <fieldset className="col">
                 <div className="row-gen">
                     <fieldset className="col">
-                        <SelectField
-                            name={"model"}
-                            placeholder={"Model"}
-                            value={params?.schedule}
-                            onSelect={updateParams}
-                            options={runtime.models}
-                        />
+                        <button className="button-holo" style={{marginTop: "10px"}} role="button"
+                                onClick={() => {
+                                    const result = loadModel()
+                                    debugger
+                                }}>{"Select Model"}
+                        </button>
+                        {/*<SelectField*/}
+                        {/*    name={"model"}*/}
+                        {/*    placeholder={"Model"}*/}
+                        {/*    value={params?.schedule}*/}
+                        {/*    onChange={updateParams}*/}
+                        {/*    options={runtime.models}*/}
+                        {/*/>*/}
                     </fieldset>
                     <button className="button-holo" style={{marginTop: "10px"}} role="button"
                             onClick={() => {
+                                predict(params?.prompt)
                             }}>{runtime.generating ? "Cancel" : "Generate"}</button>
                 </div>
                 <div style={{width: "100%", height: "40rem", position: "relative"}}>
-                    <div className={`progress-background ${runtime.generating ? " show-progress" : ""}`}>
+                    <div className={`progress-background ${predictLoading ? " show-progress" : ""}`}>
                         <ul className={`progress-steps ${runtime.generating ? " show-steps" : ""}`}>
                             <li className={modelState?.loaded ? " ready" : " waiting"}
                                 data-state={modelState?.loaded ? "OK" : ""}>
