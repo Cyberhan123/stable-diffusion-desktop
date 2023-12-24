@@ -14,10 +14,6 @@ export function PredictImage(arg1, arg2) {
   return window['go']['main']['App']['PredictImage'](arg1, arg2);
 }
 
-export function ReNewInstance() {
-  return window['go']['main']['App']['ReNewInstance']();
-}
-
 export function SetOptions(arg1) {
   return window['go']['main']['App']['SetOptions'](arg1);
 }

@@ -16,13 +16,16 @@ type App struct {
 	sd          *sd.StableDiffusionModel
 	options     *sd.StableDiffusionOptions
 	modelLoaded bool
+	modelPath   string
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-
+	options := sd.DefaultStableDiffusionOptions
+	options.GpuEnable = true
+	options.NegativePrompt = ""
 	return &App{
-		options: &sd.DefaultStableDiffusionOptions,
+		options: &options,
 	}
 }
 
@@ -51,13 +54,13 @@ func (a *App) LoadFromFile() bool {
 
 	runtime.LogDebug(a.ctx, dialog[0])
 
-	modelPath := dialog[0]
+	a.modelPath = dialog[0]
 
 	if len(dialog) > 1 {
-		modelPath = filepath.Dir(dialog[0])
+		a.modelPath = filepath.Dir(dialog[0])
 	}
 
-	err = a.sd.LoadFromFile(modelPath)
+	err = a.sd.LoadFromFile(a.modelPath)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return false
@@ -67,6 +70,11 @@ func (a *App) LoadFromFile() bool {
 }
 
 func (a *App) Predict(prompt string) []string {
+
+	if len(prompt) == 0 {
+		return nil
+	}
+
 	if !a.modelLoaded {
 		return nil
 	}
@@ -127,23 +135,56 @@ func (a *App) PredictImage(initImage, prompt string) string {
 	return result
 }
 
-func (a *App) SetOptions(option sd.StableDiffusionOptions) {
-	a.sd.SetOptions(option)
+type SDOption struct {
+	NegativePrompt   string
+	CfgScale         float32
+	Width            int
+	Height           int
+	SampleMethod     sd.SampleMethod
+	SampleSteps      int
+	Strength         float32
+	Seed             int64
+	BatchCount       int
+	GpuEnable        bool
+	OutputsImageType sd.OutputsImageType
 }
 
-func (a *App) ReNewInstance() bool {
-	if a.sd != nil {
-		err := a.sd.Close()
-		if err != nil {
-			return false
-		}
-		a.sd = nil
-	}
-	a.modelLoaded = false
-	model, err := sd.NewStableDiffusionAutoModel(*a.options)
-	if err != nil {
-		return false
-	}
-	a.sd = model
-	return true
+func (a *App) SetOptions(option SDOption) {
+	a.options.NegativePrompt = option.NegativePrompt
+	a.options.CfgScale = option.CfgScale
+	a.options.Width = option.Width
+	a.options.Height = option.Height
+	a.options.SampleMethod = option.SampleMethod
+	a.options.SampleSteps = option.SampleSteps
+	a.options.Strength = option.Strength
+	a.options.Seed = option.Seed
+	a.options.BatchCount = option.BatchCount
+	a.options.GpuEnable = option.GpuEnable
+	a.options.OutputsImageType = option.OutputsImageType
+	a.sd.SetOptions(*a.options)
 }
+
+//func (a *App) ReNewInstance(option sd.StableDiffusionOptions) bool {
+//	if a.sd != nil {
+//		err := a.sd.Close()
+//		if err != nil {
+//			return false
+//		}
+//		a.sd = nil
+//	}
+//
+//	model, err := sd.NewStableDiffusionAutoModel(*a.options)
+//	if err != nil {
+//		return false
+//	}
+//	a.sd = model
+//
+//	if a.modelLoaded {
+//		err = a.sd.LoadFromFile(a.modelPath)
+//		if err != nil {
+//			return false
+//		}
+//		a.modelLoaded = true
+//	}
+//	return true
+//}

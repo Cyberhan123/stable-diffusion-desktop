@@ -11,7 +11,8 @@
   "dependencies": {
     "ahooks": "^3.7.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "antd": "^5.12.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.45",
