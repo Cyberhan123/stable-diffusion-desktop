@@ -4,7 +4,7 @@ import ImageGallery from "./components/ImageGallery";
 import './App.css';
 import {useRequest} from "ahooks";
 import {LoadFromFile, Predict, SetOptions} from "../wailsjs/go/main/App";
-import {Button, Col, Form, Input, Layout, Row, Select, Slider, Space} from "antd";
+import {Button, Col, Form, Input, InputNumber, Layout, Row, Select, Slider, Space} from "antd";
 
 
 function App() {
@@ -28,8 +28,15 @@ function App() {
     })
 
     const {runAsync: predict, loading: predictLoading, data: images} = useRequest(async (params) => {
-        await SetOptions(params)
-        return await Predict(params.Prompt)
+        const formatParams = {
+            ...params,
+            Width: Number(params.Width),
+            Height: Number(params.Height),
+            BatchCount: Number(params.BatchCount)
+        }
+        await SetOptions(formatParams)
+        debugger
+        return await Predict(params.Prompt,)
     }, {
         manual: true
     })
@@ -63,7 +70,7 @@ function App() {
                             <Form.Item label="Negative Prompt" name="NegativePrompt">
                                 <Input.TextArea rows={2}/>
                             </Form.Item>
-                            <Form.Item label="Sampler Method" name="SamplerMethod">
+                            <Form.Item label="Sampler Method" name="SampleMethod">
                                 <Select
                                     options={[
                                         {
@@ -129,15 +136,14 @@ function App() {
                             <Form.Item>
                                 <Space.Compact>
                                     <Form.Item label={"width"} name={"Width"}>
-                                        <Input type={"number"}/>
+                                        <InputNumber min={128} max={1024} step={128}/>
                                     </Form.Item>
-
                                     <Form.Item label={"height"} name={"Height"}>
-                                        <Input type={"number"}/>
+                                        <InputNumber min={128} max={1024} step={128}/>
                                     </Form.Item>
                                 </Space.Compact>
                             </Form.Item>
-                            <Form.Item label={"Batch Count"}>
+                            <Form.Item label={"Batch Count"} name={"BatchCount"}>
                                 <Slider
                                     min={1}
                                     max={20}
@@ -164,8 +170,7 @@ function App() {
                                 disabled={!hasLoadModel}
                                 onClick={async () => {
                                     const params = form.getFieldsValue()
-                                    debugger
-                                    // await predict(params?.prompt)
+                                    await predict(params)
                                 }}>
                                 {predictLoading ? "Cancel" : "Generate"}
                             </Button>
@@ -201,8 +206,6 @@ function App() {
                 </Row>
             </Layout.Content>
         </Layout>
-
-
     </div>;
 }
 

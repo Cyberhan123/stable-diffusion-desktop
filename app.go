@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"fmt"
 	sd "github.com/seasonjs/stable-diffusion"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"io"
@@ -161,6 +162,7 @@ func (a *App) SetOptions(option SDOption) {
 	a.options.BatchCount = option.BatchCount
 	a.options.GpuEnable = option.GpuEnable
 	a.options.OutputsImageType = option.OutputsImageType
+	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
 	a.sd.SetOptions(*a.options)
 }
 
