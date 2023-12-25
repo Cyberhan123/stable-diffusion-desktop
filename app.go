@@ -23,7 +23,8 @@ type App struct {
 // NewApp creates a new App application struct
 func NewApp() *App {
 	options := sd.DefaultStableDiffusionOptions
-	options.GpuEnable = true
+	options.GpuEnable = false
+	options.FreeParamsImmediately = true
 	options.NegativePrompt = ""
 	return &App{
 		options: &options,
@@ -94,7 +95,7 @@ func (a *App) Predict(prompt string) []string {
 	var result []string
 	for _, writer := range writers {
 		base64String := base64.StdEncoding.EncodeToString(writer.(*bytes.Buffer).Bytes())
-		result = append(result, base64String)
+		result = append(result, "data:image/png;base64,"+base64String)
 	}
 
 	return result
@@ -133,7 +134,7 @@ func (a *App) PredictImage(initImage, prompt string) string {
 	//}
 
 	result = base64.StdEncoding.EncodeToString(buffer.Bytes())
-	return result
+	return "data:image/png;base64," + result
 }
 
 type SDOption struct {
@@ -151,17 +152,53 @@ type SDOption struct {
 }
 
 func (a *App) SetOptions(option SDOption) {
-	a.options.NegativePrompt = option.NegativePrompt
-	a.options.CfgScale = option.CfgScale
-	a.options.Width = option.Width
-	a.options.Height = option.Height
-	a.options.SampleMethod = option.SampleMethod
-	a.options.SampleSteps = option.SampleSteps
-	a.options.Strength = option.Strength
-	a.options.Seed = option.Seed
-	a.options.BatchCount = option.BatchCount
-	a.options.GpuEnable = option.GpuEnable
-	a.options.OutputsImageType = option.OutputsImageType
+	if len(option.NegativePrompt) > 0 && a.options.NegativePrompt != option.NegativePrompt {
+		a.options.NegativePrompt = option.NegativePrompt
+	}
+
+	if a.options.CfgScale != option.CfgScale {
+
+	}
+
+	if a.options.Width != option.Width {
+		a.options.Width = option.Width
+	}
+
+	if a.options.Height != option.Height {
+		a.options.Height = option.Height
+	}
+
+	if a.options.SampleMethod != option.SampleMethod {
+		a.options.SampleMethod = option.SampleMethod
+	}
+
+	if a.options.SampleSteps != option.SampleSteps {
+		a.options.SampleSteps = option.SampleSteps
+	}
+
+	if a.options.Strength != option.Strength {
+		a.options.Strength = option.Strength
+	}
+
+	if a.options.Seed != option.Seed {
+		a.options.Seed = option.Seed
+	}
+
+	if a.options.BatchCount != option.BatchCount {
+		a.options.BatchCount = option.BatchCount
+	}
+
+	if a.options.BatchCount != option.BatchCount {
+		a.options.BatchCount = option.BatchCount
+	}
+
+	//if a.options.GpuEnable != option.GpuEnable {
+	//	a.options.GpuEnable = option.GpuEnable
+	//}
+
+	if len(option.OutputsImageType) > 0 && a.options.OutputsImageType != option.OutputsImageType {
+		a.options.OutputsImageType = option.OutputsImageType
+	}
 	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
 	a.sd.SetOptions(*a.options)
 }

@@ -4,22 +4,13 @@ import ImageGallery from "./components/ImageGallery";
 import './App.css';
 import {useRequest} from "ahooks";
 import {LoadFromFile, Predict, SetOptions} from "../wailsjs/go/main/App";
-import {Button, Col, Form, Input, InputNumber, Layout, Row, Select, Slider, Space} from "antd";
+import {Button, Col, Form, Input, InputNumber, Layout, Row, Select, Slider} from "antd";
 
 
 function App() {
     const [hasLoadModel, setHasLoadModel] = useState(false)
+
     const [form] = Form.useForm();
-    const [modelState, setModelState] = useState({
-        loaded: false,
-        sampling: true,
-        sampling_info: "1/1",
-        decoding: true,
-        decoding_info: "1/1",
-        upscale: false,
-        upscaling: true,
-        upscaling_info: "1/1"
-    })
 
     const {runAsync: loadModel, loading: loadModelLoading} = useRequest(async () => {
         return await LoadFromFile()
@@ -34,12 +25,12 @@ function App() {
             Height: Number(params.Height),
             BatchCount: Number(params.BatchCount)
         }
-        await SetOptions(formatParams)
-        debugger
-        return await Predict(params.Prompt,)
+        await SetOptions(formatParams);
+        return await Predict(params.Prompt)
     }, {
         manual: true
     })
+    debugger
 
     return <div>
         <Layout>
@@ -134,19 +125,23 @@ function App() {
                                 <Input type={"number"}/>
                             </Form.Item>
                             <Form.Item>
-                                <Space.Compact>
-                                    <Form.Item label={"width"} name={"Width"}>
-                                        <InputNumber min={128} max={1024} step={128}/>
-                                    </Form.Item>
-                                    <Form.Item label={"height"} name={"Height"}>
-                                        <InputNumber min={128} max={1024} step={128}/>
-                                    </Form.Item>
-                                </Space.Compact>
+                                <Row>
+                                    <Col span={12}>
+                                        <Form.Item label={"width"} name={"Width"}>
+                                            <InputNumber min={128} max={1024} step={128}/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item label={"height"} name={"Height"}>
+                                            <InputNumber min={128} max={1024} step={128}/>
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
                             </Form.Item>
                             <Form.Item label={"Batch Count"} name={"BatchCount"}>
                                 <Slider
                                     min={1}
-                                    max={20}
+                                    max={50}
                                     step={1}
                                 />
                             </Form.Item>
@@ -161,11 +156,11 @@ function App() {
                                     if (result) {
                                         setHasLoadModel(true)
                                     }
-
                                 }}>
                                 Select Model
                             </Button>
                             <Button
+                                style={{marginLeft: 20}}
                                 type="primary"
                                 disabled={!hasLoadModel}
                                 onClick={async () => {
@@ -176,37 +171,14 @@ function App() {
                             </Button>
                         </div>
                         <div style={{width: "100%", height: "40rem", position: "relative"}}>
-                            <div className={`progress-background ${predictLoading ? " show-progress" : ""}`}>
-                                <ul className={`progress-steps ${predictLoading ? " show-steps" : ""}`}>
-                                    <li className={modelState?.loaded ? " ready" : " waiting"}
-                                        data-state={modelState?.loaded ? "OK" : ""}>
-                                        {modelState?.loaded ? "Model Loaded" : "Loading model"}
-                                    </li>
-                                    <li className={modelState?.sampling ? " waiting" : " ready"}
-                                        data-state={modelState?.sampling ? "" : "OK"}>
-                                        {modelState?.sampling ? `Sampling image ${modelState.sampling_info}` :
-                                            `${modelState?.sampling_info} Images Generated`}
-                                    </li>
-                                    <li className={modelState?.decoding ? " waiting" : " ready"}
-                                        data-state={modelState?.decoding ? "" : "OK"}>
-                                        {modelState?.decoding ? `Decoding image ${modelState.decoding_info}` :
-                                            `${modelState?.decoding_info} Images decoded`}
-                                    </li>
-                                    {modelState.upscale ?
-                                        <li className={modelState?.upscaling ? "waiting" : "ready"}
-                                            data-state={modelState?.upscaling ? "" : "OK"}>
-                                            Upscaling
-                                            {modelState?.upscaling_info}
-                                        </li> : ""}
-                                </ul>
-                            </div>
-                            {images?.length > 0 ? <ImageGallery images={images}/> : ""}
+                            <ImageGallery images={images} loading={predictLoading}/>
                         </div>
                     </Col>
                 </Row>
             </Layout.Content>
         </Layout>
-    </div>;
+    </div>
+        ;
 }
 
 export default App

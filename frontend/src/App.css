@@ -199,6 +199,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 }
+
 .col {
     padding: 5px;
     border: none;
@@ -462,12 +463,15 @@ body {
 .progress-steps li:first-child::after {
     content: none;
 }
+
 .progress-steps li.ready {
     color: #06bb06;
 }
+
 .progress-steps li.ready::before {
     border: 2px solid #06bb06;
 }
+
 .progress-steps li.ready + li::after {
     background-color: #06bb06;
 }
@@ -478,13 +482,13 @@ body {
     background-color: #fff;
     border-radius: 24px;
     border-style: none;
-    box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+    box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px, rgba(0, 0, 0, .14) 0 6px 10px 0, rgba(0, 0, 0, .12) 0 1px 18px 0;
     box-sizing: border-box;
     color: #3c4043;
     cursor: pointer;
     display: inline-flex;
     fill: currentcolor;
-    font-family: "Google Sans",Roboto,Arial,sans-serif;
+    font-family: "Google Sans", Roboto, Arial, sans-serif;
     font-size: 14px;
     font-weight: 500;
     height: 48px;
@@ -508,7 +512,7 @@ body {
 .button-holo:not(:disabled):hover {
     background: #F6F9FE;
     color: #174ea6;
-    box-shadow: rgba(0, 0, 0, .2) 0 4px 8px -2px,rgba(0, 0, 0, .18) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+    box-shadow: rgba(0, 0, 0, .2) 0 4px 8px -2px, rgba(0, 0, 0, .18) 0 6px 10px 0, rgba(0, 0, 0, .12) 0 1px 18px 0;
 }
 
 .button-holo:active {
@@ -528,6 +532,8 @@ body {
 }
 
 .image-gallery {
+    min-width: 300px;
+    min-height: 300px;
     padding: 5px;
 }
 

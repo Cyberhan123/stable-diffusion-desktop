@@ -1,39 +1,49 @@
 import {FC, useState} from "react";
+import {Image, Spin} from "antd";
 
 type ImageGalleryProps = {
-    images: { info: string, data: string }[];
+    loading?: boolean | undefined;
+    images: string[];
 }
 
-const ImageGallery: FC<ImageGalleryProps> = ({images}) => {
-    const [showInfo, setShowInfo] = useState({classes: "image-info"});
-    const [currentImage, setCurrentImage] = useState<number>(1);
-    const leave = () => {
-        setShowInfo({classes: "image-info"});
-    };
+const ImageGallery: FC<ImageGalleryProps> = ({images, loading}) => {
+    const [currentImage, setCurrentImage] = useState<number>(0);
 
-    const enter = () => {
-        setShowInfo({classes: "show-info"});
-    };
-
-    return <div className="image-gallery">
-        <ul>
-            {images.map((image, idx) =>
-                <li>
-                    <img src={image.data} onClick={() => setCurrentImage(idx)}
-                         className={currentImage == idx ? "selected" : ""} alt={""}/>
-                </li>
-            )}
-        </ul>
-        <div className="preview">
-            <button className="button-holo" style={{margin: "10px 0"}} role="button" onClick={()=>{}}>
-                Download
-            </button>
-            <div className="image-preview" style={{position: "relative"}} onMouseOver={enter} onMouseOut={leave}>
-                <span
-                    className={showInfo.classes}>{images[currentImage].info}</span>
-                <img src={images[currentImage].data} alt={""}/>
-            </div>
+    if ((images?.length ?? 0) == 0) {
+        return null
+    }
+    debugger
+    return <Spin tip="Loading..." spinning={loading}>
+        <div className="image-gallery">
+            {
+                !loading && <>
+                    <ul>
+                        {images?.map?.((image, idx) =>
+                            <li>
+                                <img src={image} onClick={() => setCurrentImage(idx)}
+                                     className={currentImage == idx ? "selected" : ""} alt={""}/>
+                            </li>
+                        )}
+                    </ul>
+                    <div className="preview">
+                        <button className="button-holo" style={{margin: "10px 0"}} role="button" onClick={() => {
+                        }}>
+                            Download
+                        </button>
+                        <div className="image-preview" style={{position: "relative"}}>
+                            <Image.PreviewGroup
+                                items={images}
+                            >
+                                <Image
+                                    width={300}
+                                    src={images?.[currentImage]}
+                                />
+                            </Image.PreviewGroup>
+                        </div>
+                    </div>
+                </>
+            }
         </div>
-    </div>;
+    </Spin>;
 }
 export default ImageGallery;
