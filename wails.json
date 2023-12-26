@@ -1,6 +1,6 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "stable-diffusion-desktop",
+  "name": "stable diffusion desktop",
   "outputfilename": "stable diffusion desktop",
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
@@ -9,5 +9,12 @@
   "author": {
     "name": "Cyberhan123",
     "email": "255542417@qq.com"
+  },
+  "Info": {
+    "companyName": "Cyebrhan123",
+    "productName": "stable diffusion desktop",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright 2023 Cyberhan123",
+    "comments": "Built using Wails (https://wails.io)"
   }
 }
