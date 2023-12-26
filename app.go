@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	goruntime "runtime"
 	"time"
 )
 
@@ -25,6 +26,9 @@ type App struct {
 // NewApp creates a new App application struct
 func NewApp() *App {
 	options := sd.DefaultStableDiffusionOptions
+	if goruntime.GOOS == "windows" {
+		options.GpuEnable = true
+	}
 	options.GpuEnable = false
 	options.FreeParamsImmediately = true
 	options.NegativePrompt = ""
@@ -165,7 +169,7 @@ func (a *App) SetOptions(option SDOption) {
 	}
 
 	if a.options.CfgScale != option.CfgScale {
-
+		a.options.CfgScale = option.CfgScale
 	}
 
 	if a.options.Width != option.Width {
