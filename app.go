@@ -8,7 +8,9 @@ import (
 	sd "github.com/seasonjs/stable-diffusion"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"io"
+	"os"
 	"path/filepath"
+	"time"
 )
 
 // App struct
@@ -86,11 +88,14 @@ func (a *App) Predict(prompt string) []string {
 		writers = append(writers, buffer)
 	}
 
+	haijck := &HijackStdOut{}
+	haijck.Begin(a.ctx)
 	err := a.sd.Predict(prompt, writers)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
+	haijck.End()
 
 	var result []string
 	for _, writer := range writers {
@@ -119,6 +124,8 @@ func (a *App) PredictImage(initImage, prompt string) string {
 	//	writers = append(writers, buffer)
 	//}
 
+	haijck := &HijackStdOut{}
+	haijck.Begin(a.ctx)
 	var buffer bytes.Buffer
 
 	err = a.sd.ImagePredict(reader, prompt, &buffer)
@@ -127,6 +134,7 @@ func (a *App) PredictImage(initImage, prompt string) string {
 		return ""
 	}
 
+	haijck.End()
 	var result string
 	//for _, writer := range buffer {
 	//	base64String := base64.StdEncoding.EncodeToString(writer.(*bytes.Buffer).Bytes())
@@ -203,27 +211,71 @@ func (a *App) SetOptions(option SDOption) {
 	a.sd.SetOptions(*a.options)
 }
 
-//func (a *App) ReNewInstance(option sd.StableDiffusionOptions) bool {
-//	if a.sd != nil {
-//		err := a.sd.Close()
+//	func (a *App) ReNewInstance(option sd.StableDiffusionOptions) bool {
+//		if a.sd != nil {
+//			err := a.sd.Close()
+//			if err != nil {
+//				return false
+//			}
+//			a.sd = nil
+//		}
+//
+//		model, err := sd.NewStableDiffusionAutoModel(*a.options)
 //		if err != nil {
 //			return false
 //		}
-//		a.sd = nil
-//	}
+//		a.sd = model
 //
-//	model, err := sd.NewStableDiffusionAutoModel(*a.options)
-//	if err != nil {
-//		return false
-//	}
-//	a.sd = model
-//
-//	if a.modelLoaded {
-//		err = a.sd.LoadFromFile(a.modelPath)
-//		if err != nil {
-//			return false
+//		if a.modelLoaded {
+//			err = a.sd.LoadFromFile(a.modelPath)
+//			if err != nil {
+//				return false
+//			}
+//			a.modelLoaded = true
 //		}
-//		a.modelLoaded = true
+//		return true
 //	}
-//	return true
-//}
+type HijackStdOut struct {
+	writer *os.File
+	cpy    *os.File
+}
+
+// Begin
+func (o *HijackStdOut) Begin(ctx context.Context) error {
+	o.cpy = os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		return err
+	}
+	o.writer = w
+
+	os.Stdout = w
+
+	go func(ctx context.Context) {
+		var buf bytes.Buffer
+		throttle := time.Tick(1 * time.Second)
+		for {
+			select {
+			case <-throttle:
+				n, err := io.Copy(&buf, r)
+				if err != nil {
+					fmt.Println("copy：", err)
+					break
+				}
+
+				if n > 0 {
+					runtime.EventsEmit(ctx, "stdout", buf.String())
+					runtime.LogDebug(ctx, "stdout: "+buf.String())
+					buf.Reset()
+				}
+			}
+		}
+	}(ctx)
+	return nil
+}
+
+// End
+func (o *HijackStdOut) End() {
+	os.Stdout = o.cpy
+	_ = o.writer.Close()
+}

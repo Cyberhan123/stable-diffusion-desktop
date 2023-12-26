@@ -4,7 +4,8 @@ import ImageGallery from "./components/ImageGallery";
 import './App.css';
 import {useRequest} from "ahooks";
 import {LoadFromFile, Predict, SetOptions} from "../wailsjs/go/main/App";
-import {Button, Col, Form, Input, InputNumber, Layout, Row, Select, Slider} from "antd";
+import {Button, Col, Flex, Form, Input, InputNumber, Layout, Row, Select, Slider} from "antd";
+import Terminal from "./components/Terminal";
 
 
 function App() {
@@ -30,7 +31,6 @@ function App() {
     }, {
         manual: true
     })
-    debugger
 
     return <div>
         <Layout>
@@ -170,15 +170,15 @@ function App() {
                                 {predictLoading ? "Cancel" : "Generate"}
                             </Button>
                         </div>
-                        <div style={{width: "100%", height: "40rem", position: "relative"}}>
-                            <ImageGallery images={images} loading={predictLoading}/>
-                        </div>
+                        <Flex gap="middle" vertical>
+                                <ImageGallery images={images} loading={predictLoading}/>
+                                <Terminal/>
+                        </Flex>
                     </Col>
                 </Row>
             </Layout.Content>
         </Layout>
-    </div>
-        ;
+    </div>;
 }
 
 export default App
