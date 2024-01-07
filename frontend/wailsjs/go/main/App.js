@@ -6,12 +6,12 @@ export function LoadFromFile() {
   return window['go']['main']['App']['LoadFromFile']();
 }
 
-export function Predict(arg1) {
-  return window['go']['main']['App']['Predict'](arg1);
+export function Predict(arg1, arg2) {
+  return window['go']['main']['App']['Predict'](arg1, arg2);
 }
 
-export function PredictImage(arg1, arg2) {
-  return window['go']['main']['App']['PredictImage'](arg1, arg2);
+export function PredictImage(arg1, arg2, arg3) {
+  return window['go']['main']['App']['PredictImage'](arg1, arg2, arg3);
 }
 
 export function SetOptions(arg1) {

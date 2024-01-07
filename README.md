@@ -1,12 +1,70 @@
 # Stable diffusion desktop
 
-## Live Development
+<p align="center">
+  <img src="./assets/img.png" width="256x">
+</p>
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+Minimalist and stable diffusion desktop application with only one executable file (No python required).
 
-## Building
+**It is currently in preview, so there may be many issues. Feedback is welcome.**
 
-To build a redistributable, production mode package, use `wails build`.
+## User Guide
+Download the latest release from [here](https://github.com/Cyberhan123/stable-diffusion-desktop/releases/latest)
+
+## Features
+- use [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) as backend
+- SD1.x, SD2.x, SD-Turbo, SDXL-Turbo support
+- 16-bit, 32-bit float and 4-bit, 5-bit, 8-bit integer quantization support
+- Accelerated memory-efficient CPU inference
+- Auto-detect CPU and GPU and cross-platform support
+- Full Nvidia ( CUDA12 ) GPU backend for GPU acceleration (Windows Only) and AMD GPU (Windows Only) come soon.
+- Can load ckpt, safetensors, gguf and diffusers models/checkpoints. 
+- Sampling method
+    - `Euler A`
+    - `Euler`
+    - `Heun`
+    - `DPM2`
+    - `DPM++ 2M`
+    - [`DPM++ 2M v2`](https://github.com/AUTOMATIC1111/stable-diffusion-webui/discussions/8457)
+    - `DPM++ 2S a`
+    - [`LCM`](https://github.com/AUTOMATIC1111/stable-diffusion-webui/issues/13952)
+
+## TODO
+
+- [ ] UI improvements
+- [ ] More acceleration platform support 
+- [ ] Image to Image support
+- [ ] Random seed support
+- [ ] Lora support
+- [ ] Upscaling support
+- [ ] Remote server support
+- [ ] Full Screen support
+- [ ] terminal show full progress bar
+- [ ] LCM/LCM-LoRA support
+- [ ] TAESD support
+- [ ] auto download model/checkpoint/lora
+- [ ] auto update
+- [ ] plugin support
+- [ ] i18n support
+
+## UI ShowCase
+<p align="center">
+  <img src="./assets/sd-desktop.png" width="768x">
+</p>
+
+## Development
+
+If you want to participate in the development, please check out the [development.md](./docs/development.md).
+
+## Disclaimer
+
+This program only provides capabilities related to Stable Diffusion inference. 
+Users are required to comply with the relevant laws of the region and country where they are located, 
+as well as the model license.
+Any developer related to this software does not assume corresponding legal and supervisory obligations.
+If you download and use this software, you have confirmed this disclaimer and the open source Licensed of this software.
+
+## License
+
+Copyright (c) Cyberhan123. All rights reserved. Licensed under the GPL-3.0 license. 
+See License.txt in the project root for license information.

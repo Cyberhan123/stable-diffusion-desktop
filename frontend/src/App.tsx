@@ -3,10 +3,10 @@ import ImageGallery from "./components/ImageGallery";
 
 import './App.css';
 import {useRequest} from "ahooks";
-import {LoadFromFile, Predict, SetOptions} from "../wailsjs/go/main/App";
-import {Button, Col, Flex, Form, Input, InputNumber, Layout, Row, Select, Slider} from "antd";
+import {LoadFromFile, Predict} from "../wailsjs/go/main/App";
+import {Button, Col, Flex, Form, Input, InputNumber, Layout, Row, Select, Slider, Switch} from "antd";
 import Terminal from "./components/Terminal";
-
+import {omit} from "lodash-es";
 
 function App() {
     const [hasLoadModel, setHasLoadModel] = useState(false)
@@ -18,16 +18,27 @@ function App() {
     }, {
         manual: true
     })
-
+    // NegativePrompt   string
+    // ClipSkip         int
+    // CfgScale         float32
+    // Width            int
+    // Height           int
+    // SampleMethod     SampleMethod
+    // SampleSteps      int
+    // Strength         float32
+    // Seed             int64
+    // BatchCount       int
+    // OutputsImageType OutputsImageType
     const {runAsync: predict, loading: predictLoading, data: images} = useRequest(async (params) => {
-        const formatParams = {
-            ...params,
-            Width: Number(params.Width),
-            Height: Number(params.Height),
-            BatchCount: Number(params.BatchCount)
-        }
-        await SetOptions(formatParams);
-        return await Predict(params.Prompt)
+        const fullParams = omit(params, ["Prompt", "RandomSeed"])
+        fullParams.Width = Number(fullParams.Width)
+        fullParams.Height = Number(fullParams.Height)
+        fullParams.SampleMethod = Number(fullParams.SampleMethod)
+        fullParams.SampleSteps = Number(fullParams.SampleSteps)
+        fullParams.Seed = Number(fullParams.Seed)
+        fullParams.BatchCount = Number(fullParams.BatchCount)
+        fullParams.OutputsImageType = "PNG"
+        return await Predict(params.Prompt, fullParams)
     }, {
         manual: true
     })
@@ -36,11 +47,11 @@ function App() {
         <Layout>
             <Layout.Content style={{height: "100vh"}}>
                 <Row style={{margin: 10}}>
-                    <Col span={12}>
+                    <Col span={10}>
                         <Form
                             labelCol={{span: 8}}
                             wrapperCol={{span: 16}}
-                            style={{maxWidth: 600}}
+                            // style={{maxWidth: 600}}
                             form={form}
                             initialValues={{
                                 Prompt: "",
@@ -48,7 +59,7 @@ function App() {
                                 CfgScale: 7.0,
                                 Width: 512,
                                 Height: 512,
-                                SampleMethod: "EULER_A",
+                                SampleMethod: 0,
                                 SampleSteps: 20,
                                 Seed: 42,
                                 BatchCount: 1
@@ -66,35 +77,35 @@ function App() {
                                     options={[
                                         {
                                             label: "Euler A",
-                                            value: "EULER_A"
+                                            value: 0
                                         },
                                         {
                                             label: "Euler",
-                                            value: "EULER"
+                                            value: 1
                                         },
                                         {
                                             label: "Heun",
-                                            value: "HEUN"
+                                            value: 2
                                         },
                                         {
                                             label: "DPM2",
-                                            value: "DPM2"
+                                            value: 3
                                         },
                                         {
                                             label: "DPM++ 2S A",
-                                            value: "DPMPP2S_A"
+                                            value: 4
                                         },
                                         {
                                             label: "DPM++ 2M",
-                                            value: "DPMPP2M"
+                                            value: 5
                                         },
                                         {
                                             label: "DPM++ 2M v2",
-                                            value: "DPMPP2M_V2"
+                                            value: 6
                                         },
                                         {
                                             label: "LCM",
-                                            value: "LCM"
+                                            value: 7
                                         }]}
                                 />
                             </Form.Item>
@@ -121,8 +132,19 @@ function App() {
                                     </Col>
                                 </Row>
                             </Form.Item>
-                            <Form.Item label={"seed"} name={"Seed"}>
-                                <Input type={"number"}/>
+                            <Form.Item>
+                                <Row>
+                                    <Col span={12}>
+                                        <Form.Item label={"Custom Seed"} name={"Seed"}>
+                                            <Input type={"number"}/>
+                                        </Form.Item>
+                                    </Col>
+                                    {/*<Col span={12}>*/}
+                                    {/*    <Form.Item label={"Random seed"} name={"RandomSeed"}>*/}
+                                    {/*        <Switch defaultChecked/>*/}
+                                    {/*    </Form.Item>*/}
+                                    {/*</Col>*/}
+                                </Row>
                             </Form.Item>
                             <Form.Item>
                                 <Row>
@@ -147,7 +169,7 @@ function App() {
                             </Form.Item>
                         </Form>
                     </Col>
-                    <Col span={12}>
+                    <Col span={14}>
                         <div className="row-gen">
                             <Button
                                 loading={loadModelLoading}
@@ -171,8 +193,8 @@ function App() {
                             </Button>
                         </div>
                         <Flex gap="middle" vertical>
-                                <ImageGallery images={images} loading={predictLoading}/>
-                                <Terminal/>
+                            <ImageGallery images={images} loading={predictLoading}/>
+                            <Terminal/>
                         </Flex>
                     </Col>
                 </Row>

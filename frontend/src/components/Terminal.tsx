@@ -9,13 +9,17 @@ const Terminal = () => {
     const terminal = useRef<XTerminal>(null);
     const terminalContainerRef = useRef<HTMLDivElement>(null);
     useMount(() => {
-        EventsOn("stdout", (data) => {
-            console.log(data)
+        EventsOn("log", (level, text) => {
+            if (!!terminal?.current) {
+                terminal.current.write(`${text}\r`);
+                terminal.current.flush();
+            }
+            console.log(text)
         });
         terminal.current = new XTerminal({
             fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-            fontWeight: 400,
-            fontSize: 14,
+            fontWeight: 1,
+            fontSize: 12,
             rows: Math.ceil(
                 (terminalContainerRef.current.clientHeight -
                     150) /
@@ -23,7 +27,6 @@ const Terminal = () => {
             ),
         });
         terminal.current.open(terminalContainerRef.current);
-        terminal.current.write("\r\n\x1b[33m$\x1b[0m ");
         const fitAddon = new FitAddon();
         terminal.current.loadAddon(fitAddon);
         fitAddon.fit();

@@ -8,30 +8,29 @@ import (
 	sd "github.com/seasonjs/stable-diffusion"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"io"
-	"os"
 	"path/filepath"
 	goruntime "runtime"
-	"time"
 )
 
 // App struct
 type App struct {
 	ctx         context.Context
-	sd          *sd.StableDiffusionModel
-	options     *sd.StableDiffusionOptions
+	sd          *sd.Model
+	options     *sd.Options
 	modelLoaded bool
 	modelPath   string
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	options := sd.DefaultStableDiffusionOptions
+	options := sd.DefaultOptions
 	if goruntime.GOOS == "windows" {
 		options.GpuEnable = true
+	} else {
+		options.GpuEnable = false
 	}
-	options.GpuEnable = false
 	options.FreeParamsImmediately = true
-	options.NegativePrompt = ""
+
 	return &App{
 		options: &options,
 	}
@@ -40,12 +39,15 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
-	model, err := sd.NewStableDiffusionAutoModel(*a.options)
+	model, err := sd.NewAutoModel(*a.options)
 	if err != nil {
 		runtime.LogError(ctx, err.Error())
 	}
 	a.ctx = ctx
 	a.sd = model
+	a.sd.SetLogCallback(func(level sd.LogLevel, text string) {
+		runtime.EventsEmit(ctx, "log", level, text)
+	})
 }
 
 func (a *App) LoadFromFile() bool {
@@ -77,7 +79,7 @@ func (a *App) LoadFromFile() bool {
 	return true
 }
 
-func (a *App) Predict(prompt string) []string {
+func (a *App) Predict(prompt string, params sd.FullParams) []string {
 
 	if len(prompt) == 0 {
 		return nil
@@ -87,19 +89,16 @@ func (a *App) Predict(prompt string) []string {
 		return nil
 	}
 	var writers []io.Writer
-	for i := 0; i < a.options.BatchCount; i++ {
+	for i := 0; i < params.BatchCount; i++ {
 		buffer := new(bytes.Buffer)
 		writers = append(writers, buffer)
 	}
 
-	haijck := &HijackStdOut{}
-	haijck.Begin(a.ctx)
-	err := a.sd.Predict(prompt, writers)
+	err := a.sd.Predict(prompt, params, writers)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
-	haijck.End()
 
 	var result []string
 	for _, writer := range writers {
@@ -110,176 +109,41 @@ func (a *App) Predict(prompt string) []string {
 	return result
 }
 
-func (a *App) PredictImage(initImage, prompt string) string {
+func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []string {
 	if !a.modelLoaded {
-		return ""
+		return nil
 	}
 	decodedBytes, err := base64.StdEncoding.DecodeString(initImage)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
-		return ""
+		return nil
 	}
 
 	reader := bytes.NewReader(decodedBytes)
 
-	//var writers []io.Writer
-	//for i := 0; i < a.options.BatchCount; i++ {
-	//	buffer := new(bytes.Buffer)
-	//	writers = append(writers, buffer)
-	//}
+	var writers []io.Writer
+	for i := 0; i < params.BatchCount; i++ {
+		buffer := new(bytes.Buffer)
+		writers = append(writers, buffer)
+	}
 
-	haijck := &HijackStdOut{}
-	haijck.Begin(a.ctx)
-	var buffer bytes.Buffer
-
-	err = a.sd.ImagePredict(reader, prompt, &buffer)
+	err = a.sd.ImagePredict(reader, prompt, params, writers)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
-		return ""
+		return nil
 	}
 
-	haijck.End()
-	var result string
-	//for _, writer := range buffer {
-	//	base64String := base64.StdEncoding.EncodeToString(writer.(*bytes.Buffer).Bytes())
-	//	result = append(result, base64String)
-	//}
+	var result []string
+	for _, writer := range writers {
+		base64String := base64.StdEncoding.EncodeToString(writer.(*bytes.Buffer).Bytes())
+		result = append(result, "data:image/png;base64,"+base64String)
+	}
 
-	result = base64.StdEncoding.EncodeToString(buffer.Bytes())
-	return "data:image/png;base64," + result
+	return result
 }
 
-type SDOption struct {
-	NegativePrompt   string
-	CfgScale         float32
-	Width            int
-	Height           int
-	SampleMethod     sd.SampleMethod
-	SampleSteps      int
-	Strength         float32
-	Seed             int64
-	BatchCount       int
-	GpuEnable        bool
-	OutputsImageType sd.OutputsImageType
-}
-
-func (a *App) SetOptions(option SDOption) {
-	if len(option.NegativePrompt) > 0 && a.options.NegativePrompt != option.NegativePrompt {
-		a.options.NegativePrompt = option.NegativePrompt
-	}
-
-	if a.options.CfgScale != option.CfgScale {
-		a.options.CfgScale = option.CfgScale
-	}
-
-	if a.options.Width != option.Width {
-		a.options.Width = option.Width
-	}
-
-	if a.options.Height != option.Height {
-		a.options.Height = option.Height
-	}
-
-	if a.options.SampleMethod != option.SampleMethod {
-		a.options.SampleMethod = option.SampleMethod
-	}
-
-	if a.options.SampleSteps != option.SampleSteps {
-		a.options.SampleSteps = option.SampleSteps
-	}
-
-	if a.options.Strength != option.Strength {
-		a.options.Strength = option.Strength
-	}
-
-	if a.options.Seed != option.Seed {
-		a.options.Seed = option.Seed
-	}
-
-	if a.options.BatchCount != option.BatchCount {
-		a.options.BatchCount = option.BatchCount
-	}
-
-	if a.options.BatchCount != option.BatchCount {
-		a.options.BatchCount = option.BatchCount
-	}
-
-	//if a.options.GpuEnable != option.GpuEnable {
-	//	a.options.GpuEnable = option.GpuEnable
-	//}
-
-	if len(option.OutputsImageType) > 0 && a.options.OutputsImageType != option.OutputsImageType {
-		a.options.OutputsImageType = option.OutputsImageType
-	}
+func (a *App) SetOptions(option sd.Options) {
 	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
-	a.sd.SetOptions(*a.options)
-}
-
-//	func (a *App) ReNewInstance(option sd.StableDiffusionOptions) bool {
-//		if a.sd != nil {
-//			err := a.sd.Close()
-//			if err != nil {
-//				return false
-//			}
-//			a.sd = nil
-//		}
-//
-//		model, err := sd.NewStableDiffusionAutoModel(*a.options)
-//		if err != nil {
-//			return false
-//		}
-//		a.sd = model
-//
-//		if a.modelLoaded {
-//			err = a.sd.LoadFromFile(a.modelPath)
-//			if err != nil {
-//				return false
-//			}
-//			a.modelLoaded = true
-//		}
-//		return true
-//	}
-type HijackStdOut struct {
-	writer *os.File
-	cpy    *os.File
-}
-
-// Begin
-func (o *HijackStdOut) Begin(ctx context.Context) error {
-	o.cpy = os.Stdout
-	r, w, err := os.Pipe()
-	if err != nil {
-		return err
-	}
-	o.writer = w
-
-	os.Stdout = w
-
-	go func(ctx context.Context) {
-		var buf bytes.Buffer
-		throttle := time.Tick(1 * time.Second)
-		for {
-			select {
-			case <-throttle:
-				n, err := io.Copy(&buf, r)
-				if err != nil {
-					fmt.Println("copy：", err)
-					break
-				}
-
-				if n > 0 {
-					runtime.EventsEmit(ctx, "stdout", buf.String())
-					runtime.LogDebug(ctx, "stdout: "+buf.String())
-					buf.Reset()
-				}
-			}
-		}
-	}(ctx)
-	return nil
-}
-
-// End
-func (o *HijackStdOut) End() {
-	os.Stdout = o.cpy
-	_ = o.writer.Close()
+	a.options = &option
+	a.sd.SetOptions(option)
 }

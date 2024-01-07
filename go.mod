@@ -5,13 +5,13 @@ go 1.21
 toolchain go1.21.4
 
 require (
-	github.com/seasonjs/stable-diffusion v0.0.6
+	github.com/seasonjs/stable-diffusion v0.1.0
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/ebitengine/purego v0.5.1 // indirect
+	github.com/ebitengine/purego v0.6.0-alpha.2.0.20231129131118-33b97fd6a58b // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
@@ -36,6 +36,6 @@ require (
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848 // indirect
 	golang.org/x/net v0.19.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )
