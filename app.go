@@ -7,9 +7,13 @@ import (
 	"fmt"
 	sd "github.com/seasonjs/stable-diffusion"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"image"
+	"image/png"
 	"io"
+	"os"
 	"path/filepath"
 	goruntime "runtime"
+	"strings"
 )
 
 // App struct
@@ -146,4 +150,80 @@ func (a *App) SetOptions(option sd.Options) {
 	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
 	a.options = &option
 	a.sd.SetOptions(option)
+}
+
+func (a *App) SaveImage(imageBase64 string) bool {
+	dialog, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{})
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+
+	if len(dialog) == 0 {
+		return false
+	}
+
+	parts := strings.Split(imageBase64, ";base64,")
+	if len(parts) != 2 {
+		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+			Type:    runtime.InfoDialog,
+			Title:   "Save Image Failed",
+			Message: err.Error(),
+		})
+		return false
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(parts[1])
+	if err != nil {
+		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+			Type:    runtime.InfoDialog,
+			Title:   "Save Image Failed",
+			Message: err.Error(),
+		})
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+
+	reader := strings.NewReader(string(decoded))
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+			Type:    runtime.InfoDialog,
+			Title:   "Save Image Failed",
+			Message: err.Error(),
+		})
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+
+	file, err := os.Create(dialog)
+	if err != nil {
+		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+			Type:    runtime.InfoDialog,
+			Title:   "Save Image Failed",
+			Message: err.Error(),
+		})
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+	defer file.Close()
+
+	err = png.Encode(file, img)
+	if err != nil {
+		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+			Type:    runtime.InfoDialog,
+			Title:   "Save Image Failed",
+			Message: err.Error(),
+		})
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+
+	_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+		Type:    runtime.InfoDialog,
+		Title:   "Save Image Success",
+		Message: fmt.Sprintf("Image saved to %s", dialog),
+	})
+
+	return true
 }

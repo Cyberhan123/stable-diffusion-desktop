@@ -67,10 +67,10 @@ function PredictImage() {
                     layout="vertical"
                 >
                     <Form.Item label="Prompt" name="Prompt">
-                        <Input.TextArea rows={2}/>
+                        <Input.TextArea rows={2} maxLength={75}/>
                     </Form.Item>
                     <Form.Item label="Negative Prompt" name="NegativePrompt">
-                        <Input.TextArea rows={2}/>
+                        <Input.TextArea rows={2} maxLength={75}/>
                     </Form.Item>
                     <Form.Item label="Sampler Method" name="SampleMethod">
                         <Select
