@@ -13,7 +13,6 @@ env:
 jobs:
   build:
     strategy:
-    # Failure in one platform build won't impact the others
       fail-fast: false
       matrix:
         build:
@@ -29,11 +28,17 @@ jobs:
 
     runs-on: ${{ matrix.build.os }}
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v2
         with:
           submodules: recursive
-
+      
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
       - name: Build wails
         uses: dAppServer/wails-build-action@v2.2
         id: build
