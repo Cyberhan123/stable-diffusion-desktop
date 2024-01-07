@@ -40,5 +40,5 @@ jobs:
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
-          package: false
+          package: true
           go-version: '1.21'
