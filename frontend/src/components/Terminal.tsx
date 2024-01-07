@@ -20,6 +20,9 @@ const Terminal = () => {
             fontFamily: 'Menlo, Monaco, "Courier New", monospace',
             fontWeight: 1,
             fontSize: 12,
+            theme:{
+              background: "rgb(42,42,42)",
+            },
             rows: Math.ceil(
                 (terminalContainerRef.current.clientHeight -
                     150) /

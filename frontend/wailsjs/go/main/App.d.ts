@@ -8,4 +8,6 @@ export function Predict(arg1:string,arg2:sd.FullParams):Promise<Array<string>>;
 
 export function PredictImage(arg1:string,arg2:string,arg3:sd.FullParams):Promise<Array<string>>;
 
+export function SaveImage(arg1:string):Promise<boolean>;
+
 export function SetOptions(arg1:sd.Options):Promise<void>;

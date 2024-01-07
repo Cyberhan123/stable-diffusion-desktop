@@ -14,6 +14,10 @@ export function PredictImage(arg1, arg2, arg3) {
   return window['go']['main']['App']['PredictImage'](arg1, arg2, arg3);
 }
 
+export function SaveImage(arg1) {
+  return window['go']['main']['App']['SaveImage'](arg1);
+}
+
 export function SetOptions(arg1) {
   return window['go']['main']['App']['SetOptions'](arg1);
 }
