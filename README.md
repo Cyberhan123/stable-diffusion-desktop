@@ -4,7 +4,7 @@
   <img src="./assets/img.png" width="256x">
 </p>
 
-Minimalist and stable diffusion desktop application with only one executable file (No python required).
+Minimalist stable diffusion desktop application with only one executable file (No python required).
 
 **It is currently in preview, so there may be many issues. Feedback is welcome.**
 
