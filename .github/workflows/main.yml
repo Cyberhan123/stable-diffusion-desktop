@@ -15,22 +15,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build:
-          - name: 'App'
-            platform:  'linux/amd64'
-            os: 'ubuntu-latest'
-          - name: 'App'
-            platform:  'windows/amd64'
-            os: 'windows-latest'
-          - name: 'App'
-            platform:  'darwin/universal'
-            os: 'macos-latest'
+        build: [
+#          { name: stable-diffusion-desktop, platform: linux/amd64, os: ubuntu-latest },
+          { name: stable-diffusion-desktop, platform: windows/amd64, os: windows-latest },
+          { name: stable-diffusion-desktop, platform: darwin/universal, os: macos-latest }
+        ]
 
     runs-on: ${{ matrix.build.os }}
     steps:
     
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       
@@ -38,7 +33,7 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          
+
       - name: Build wails
         uses: dAppServer/wails-build-action@v2.2
         id: build

@@ -1,7 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "stable diffusion desktop",
-  "outputfilename": "stable diffusion desktop",
+  "name": "stable-diffusion-desktop",
+  "outputfilename": "stable-diffusion-desktop",
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
@@ -15,6 +15,6 @@
     "productName": "stable diffusion desktop",
     "productVersion": "1.0.0",
     "copyright": "Copyright 2023 Cyberhan123",
-    "comments": "Built using Wails (https://wails.io)"
+    "comments": "Copyright (c) Cyberhan123. All rights reserved. Licensed under the GPL-3.0 license. See License.txt in the project root for license information."
   }
 }
