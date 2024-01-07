@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
     "ahooks": "^3.7.8",
     "antd": "^5.12.5",
     "lodash-es": "^4.17.21",
