@@ -76,7 +76,9 @@ jobs:
 
       - name: Build Windows App + Installer
         if: runner.os == 'Windows'
-        run: wails build --platform ${{ matrix.build.platform }} -webview2 download -nsis -o ${{ matrix.build.name }}
+        run: |
+          wails build --platform ${{ matrix.build.platform }} -webview2 download -nsis -o ${{ matrix.build.name }}
+          rm ${{ matrix.build.name }}
         shell: bash
 
       - name: Build .app zip file
