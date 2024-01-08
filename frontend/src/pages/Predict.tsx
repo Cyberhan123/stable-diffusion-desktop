@@ -1,24 +1,20 @@
-import {useState} from 'react';
 import ImageGallery from "../components/ImageGallery";
 import {useRequest} from "ahooks";
-import {LoadFromFile, Predict} from "../../wailsjs/go/main/App";
-import {Button, Col, Flex, Form, Input, InputNumber, Row, Select, Slider} from "antd";
+import {Predict} from "../../wailsjs/go/main/App";
+import {Button, Col, Flex, Form, Input, Row, Select, Slider} from "antd";
 import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 
 import '../App.css';
 import {RedoOutlined} from "@ant-design/icons";
+import {FC} from "react";
 
-function PredictImage() {
-    const [hasLoadModel, setHasLoadModel] = useState(false)
+type PredictImageProps = {
+    hasLoadModel: boolean
+}
+const PredictImage: FC<PredictImageProps> = (props) => {
 
     const [form] = Form.useForm();
-
-    const {runAsync: loadModel, loading: loadModelLoading} = useRequest(async () => {
-        return await LoadFromFile()
-    }, {
-        manual: true
-    })
     // NegativePrompt   string
     // ClipSkip         int
     // CfgScale         float32
@@ -45,13 +41,10 @@ function PredictImage() {
     })
 
     return <div>
+        <Row justify={"space-between"}>
+            <Col span={8}>
 
-        <Row style={{margin: 10}}>
-            <Col span={10}>
                 <Form
-                    labelCol={{span: 8}}
-                    wrapperCol={{span: 16}}
-                    // style={{maxWidth: 600}}
                     form={form}
                     initialValues={{
                         Prompt: "",
@@ -67,10 +60,24 @@ function PredictImage() {
                     layout="vertical"
                 >
                     <Form.Item label="Prompt" name="Prompt">
-                        <Input.TextArea rows={2} maxLength={75}/>
+                        <Input.TextArea autoSize={{minRows: 2, maxRows: 6}} maxLength={75}/>
                     </Form.Item>
                     <Form.Item label="Negative Prompt" name="NegativePrompt">
-                        <Input.TextArea rows={2} maxLength={75}/>
+                        <Input.TextArea autoSize={{minRows: 2, maxRows: 6}} maxLength={75}/>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            size={"large"}
+                            style={{width: "100%"}}
+                            disabled={!props.hasLoadModel}
+                            onClick={async () => {
+                                const params = form.getFieldsValue()
+                                await predict(params)
+                            }}
+                        >
+                            Generate
+                        </Button>
                     </Form.Item>
                     <Form.Item label="Sampler Method" name="SampleMethod">
                         <Select
@@ -109,7 +116,7 @@ function PredictImage() {
                                 }]}
                         />
                     </Form.Item>
-                    <Form.Item>
+                    <Form.Item style={{marginBottom: 0}}>
                         <Row>
                             <Col span={12}>
                                 <Form.Item label={"Steps"} name={["SampleSteps"]}>
@@ -132,9 +139,9 @@ function PredictImage() {
                             </Col>
                         </Row>
                     </Form.Item>
-                    <Form.Item>
-                        <Row>
-                            <Col span={12}>
+                    <Form.Item style={{marginBottom: 0}}>
+                        <Row justify={"space-between"}>
+                            <Col span={10}>
                                 <Form.Item label={"Seed"} name={"Seed"}>
                                     <Input type={"number"}/>
                                 </Form.Item>
@@ -142,7 +149,6 @@ function PredictImage() {
                             <Col span={12}>
                                 <Form.Item label={"Random seed"} name={"RandomSeed"}>
                                     <Button
-                                        style={{marginLeft: 20}}
                                         icon={<RedoOutlined/>}
                                         onClick={() => {
                                             form.setFieldValue("Seed", Math.floor(Math.random() * Math.pow(10, 9)))
@@ -152,16 +158,16 @@ function PredictImage() {
                             </Col>
                         </Row>
                     </Form.Item>
-                    <Form.Item>
-                        <Row>
-                            <Col span={12}>
+                    <Form.Item style={{marginBottom: 0}}>
+                        <Row justify={"space-between"}>
+                            <Col span={10}>
                                 <Form.Item label={"width"} name={"Width"}>
-                                    <InputNumber min={128} max={1024} step={128}/>
+                                    <Input type={"number"} min={128} max={1024} step={128}/>
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item label={"height"} name={"Height"}>
-                                    <InputNumber min={128} max={1024} step={128}/>
+                                    <Input type={"number"} min={128} max={1024} step={128}/>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -175,29 +181,7 @@ function PredictImage() {
                     </Form.Item>
                 </Form>
             </Col>
-            <Col span={14}>
-                <div className="row-gen">
-                    <Button
-                        loading={loadModelLoading}
-                        onClick={async () => {
-                            const result = await loadModel()
-                            if (result) {
-                                setHasLoadModel(true)
-                            }
-                        }}>
-                        Select Model
-                    </Button>
-                    <Button
-                        style={{marginLeft: 20}}
-                        type="primary"
-                        disabled={!hasLoadModel}
-                        onClick={async () => {
-                            const params = form.getFieldsValue()
-                            await predict(params)
-                        }}>
-                        {predictLoading ? "Cancel" : "Generate"}
-                    </Button>
-                </div>
+            <Col span={15}>
                 <Flex gap="middle" vertical>
                     <ImageGallery images={images} loading={predictLoading}/>
                     <Terminal/>
