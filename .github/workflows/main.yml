@@ -64,12 +64,12 @@ jobs:
         run: brew install mitchellh/gon/gon
         shell: bash
 
-      - name: Build App
+      - name: Build Mac App
         if: runner.os == 'macOS'
         run: wails build --platform ${{ matrix.build.platform }} -webview2 download -o ${{ matrix.build.name }}
         shell: bash
 
-      - name: Build App
+      - name: Build Linux App
         if:  runner.os == 'Linux'
         run: wails build --platform ${{ matrix.build.platform }} -webview2 download -o ${{ matrix.build.name }}
         shell: bash
