@@ -31,17 +31,73 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v4
+        with:
+          check-latest: true
+          go-version: ^1.21
+      - run: go version
+        shell: bash
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
       - name: install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      - name: Build wails
-        uses: dAppServer/wails-build-action@v2.2
-        id: build
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        shell: bash
+
+      - name: Install Linux Wails deps
+        if:  runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+        shell: bash
+
+      - name: Install macOS Wails deps
+        if: runner.os == 'macOS'
+        run: brew install mitchellh/gon/gon
+        shell: bash
+
+      - name: Build App
+        if: runner.os == 'macOS'
+        run: wails build --platform ${{ matrix.build.platform }} -webview2 download -o ${{ matrix.build.name }}
+        shell: bash
+
+      - name: Build App
+        if:  runner.os == 'Linux'
+        run: wails build --platform ${{ matrix.build.platform }} -webview2 download -o ${{ matrix.build.name }}
+        shell: bash
+
+      - name: Build Windows App + Installer
+        if: inputs.build == 'true' && runner.os == 'Windows' && inputs.nsis == 'true'
+        working-directory: ${{ inputs.app-working-directory }}
+        run: wails build --platform ${{ matrix.build.platform }} -webview2 download -nsis -o ${{ matrix.build.name }}
+        shell: bash
+
+      - name: Build .app zip file
+        if: runner.os == 'macOS'
+        working-directory: ./build/bin
+        shell: bash
+        run: |
+          ditto -c -k --keepParent ./${{ matrix.build.name }}.app ./${{ matrix.build.name }}.app.zip
+
+      - uses: actions/upload-artifact@v3
+        if: inputs.package == 'true'
         with:
-          build-name: ${{ matrix.build.name }}
-          build-platform: ${{ matrix.build.platform }}
-          package: true
-          go-version: '1.21'
+          name: Wails Build ${{runner.os}} ${{ matrix.build.name }}
+          path: |
+            */bin/
+            *\bin\*
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: inputs.package == 'true' && startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            */bin/*
