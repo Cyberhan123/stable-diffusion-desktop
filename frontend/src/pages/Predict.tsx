@@ -1,7 +1,7 @@
 import ImageGallery from "../components/ImageGallery";
 import {useRequest} from "ahooks";
 import {Predict} from "../../wailsjs/go/main/App";
-import {Button, Col, Flex, Form, Input, InputNumber, Row, Select, Slider} from "antd";
+import {Button, Col, Flex, Form, Input, Row, Select, Slider} from "antd";
 import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 
@@ -41,15 +41,10 @@ const PredictImage: FC<PredictImageProps> = (props) => {
     })
 
     return <div>
-        <Row style={{margin: 10}}>
-            <Col span={10}>
+        <Row justify={"space-between"}>
+            <Col span={8}>
+
                 <Form
-                    labelCol={{span: 16}}
-                    wrapperCol={{span: 16}}
-                    // style={{
-                    //     height: 'calc(100vh - 42px)',
-                    //     overflowY: 'auto'
-                    // }}
                     form={form}
                     initialValues={{
                         Prompt: "",
@@ -121,7 +116,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                                 }]}
                         />
                     </Form.Item>
-                    <Form.Item>
+                    <Form.Item style={{marginBottom: 0}}>
                         <Row>
                             <Col span={12}>
                                 <Form.Item label={"Steps"} name={["SampleSteps"]}>
@@ -144,9 +139,9 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                             </Col>
                         </Row>
                     </Form.Item>
-                    <Form.Item>
-                        <Row>
-                            <Col span={12}>
+                    <Form.Item style={{marginBottom: 0}}>
+                        <Row justify={"space-between"}>
+                            <Col span={10}>
                                 <Form.Item label={"Seed"} name={"Seed"}>
                                     <Input type={"number"}/>
                                 </Form.Item>
@@ -154,7 +149,6 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                             <Col span={12}>
                                 <Form.Item label={"Random seed"} name={"RandomSeed"}>
                                     <Button
-                                        style={{marginLeft: 20}}
                                         icon={<RedoOutlined/>}
                                         onClick={() => {
                                             form.setFieldValue("Seed", Math.floor(Math.random() * Math.pow(10, 9)))
@@ -164,16 +158,16 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                             </Col>
                         </Row>
                     </Form.Item>
-                    <Form.Item>
-                        <Row>
-                            <Col span={12}>
+                    <Form.Item style={{marginBottom: 0}}>
+                        <Row justify={"space-between"}>
+                            <Col span={10}>
                                 <Form.Item label={"width"} name={"Width"}>
-                                    <InputNumber min={128} max={1024} step={128}/>
+                                    <Input type={"number"} min={128} max={1024} step={128}/>
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item label={"height"} name={"Height"}>
-                                    <InputNumber min={128} max={1024} step={128}/>
+                                    <Input type={"number"} min={128} max={1024} step={128}/>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -187,7 +181,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                     </Form.Item>
                 </Form>
             </Col>
-            <Col span={14}>
+            <Col span={15}>
                 <Flex gap="middle" vertical>
                     <ImageGallery images={images} loading={predictLoading}/>
                     <Terminal/>
