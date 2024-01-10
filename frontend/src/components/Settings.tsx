@@ -3,6 +3,7 @@ import {FC} from "react";
 import {useRequest} from "ahooks";
 import {GetDirPath, GetFilePath, GetOptions, SetOptions} from "../../wailsjs/go/main/App";
 import {Environment} from "../../wailsjs/runtime";
+import {isEqual} from "lodash-es";
 
 type SettingsProps = {
     open: boolean;
@@ -21,12 +22,17 @@ type SettingsProps = {
 // GpuEnable             bool
 const Settings: FC<SettingsProps> = (props) => {
     const [form] = Form.useForm()
+    const {data: env} = useRequest(async () => {
+        return await Environment()
+    })
     const {data, loading} = useRequest(async () => {
-        const platform = await Environment()
         const result = await GetOptions();
         form.setFieldsValue(result)
-        return platform
-    }, {})
+        return result
+    }, {
+        ready: !!props.open,
+        refreshDeps: [props.open]
+    })
 
     const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {
         await SetOptions(params)
@@ -44,7 +50,9 @@ const Settings: FC<SettingsProps> = (props) => {
         closable={false}
         open={props?.open}
         onClose={async () => {
-            await setOptions(form.getFieldsValue())
+            if (!isEqual(form.getFieldsValue(), data)) {
+                await setOptions(form.getFieldsValue())
+            }
             props.onClose()
         }}
     >
@@ -205,7 +213,7 @@ const Settings: FC<SettingsProps> = (props) => {
                 <Form.Item
                     label={"GPU Enable"}
                     name={"GpuEnable"}>
-                    <Switch disabled={data?.platform != "windows"}/>
+                    <Switch disabled={env?.platform != "windows"}/>
                 </Form.Item>
             </Form>
         </Spin>
