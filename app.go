@@ -34,7 +34,7 @@ func NewApp() *App {
 		options.GpuEnable = false
 	}
 	options.FreeParamsImmediately = true
-
+	options.Threads = goruntime.NumCPU()
 	return &App{
 		options: &options,
 	}
@@ -146,6 +146,10 @@ func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []str
 	return result
 }
 
+func (a *App) GetOptions() sd.Options {
+	return *a.options
+}
+
 func (a *App) SetOptions(option sd.Options) {
 	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
 	a.options = &option
@@ -226,4 +230,22 @@ func (a *App) SaveImage(imageBase64 string) bool {
 	})
 
 	return true
+}
+
+func (a *App) GetFilePath(title string) string {
+	dialog, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{})
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return ""
+	}
+	return dialog
+}
+
+func (a *App) GetDirPath(title string) string {
+	dialog, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{})
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return ""
+	}
+	return dialog
 }

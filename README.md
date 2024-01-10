@@ -19,6 +19,7 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 - Auto-detect CPU and GPU and cross-platform support
 - Full Nvidia ( CUDA12 ) GPU backend for GPU acceleration (Windows Only) and AMD GPU (Windows Only) come soon.
 - Can load ckpt, safetensors, gguf and diffusers models/checkpoints. 
+- Auto detect dark mode/ light mode
 - Sampling method
     - `Euler A`
     - `Euler`
@@ -30,26 +31,24 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
     - [`LCM`](https://github.com/AUTOMATIC1111/stable-diffusion-webui/issues/13952)
 
 ## TODO
-
 - [ ] UI improvements
 - [ ] More acceleration platform support 
 - [ ] Image to Image support
-- [ ] Random seed support
-- [ ] Lora support
 - [ ] Upscaling support
 - [ ] Remote server support
-- [ ] Full Screen support
 - [ ] terminal show full progress bar
-- [ ] LCM/LCM-LoRA support
 - [ ] TAESD support
 - [ ] auto download model/checkpoint/lora
 - [ ] auto update
 - [ ] plugin support
 - [ ] i18n support
 
-## UI ShowCase
+## UI Preview
 <p align="center">
-  <img src="./assets/sd-desktop.png" width="768x">
+  <img src="./assets/sd_desktop_light.png" width="768x">
+</p>
+<p align="center">
+  <img src="./assets/sd_desktop_dark.png" width="768x">
 </p>
 
 ## Development
