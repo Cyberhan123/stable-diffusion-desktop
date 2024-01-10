@@ -34,7 +34,7 @@ func NewApp() *App {
 		options.GpuEnable = false
 	}
 	options.FreeParamsImmediately = true
-
+	options.Threads = goruntime.NumCPU()
 	return &App{
 		options: &options,
 	}
@@ -144,6 +144,10 @@ func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []str
 	}
 
 	return result
+}
+
+func (a *App) GetOptions() sd.Options {
+	return *a.options
 }
 
 func (a *App) SetOptions(option sd.Options) {

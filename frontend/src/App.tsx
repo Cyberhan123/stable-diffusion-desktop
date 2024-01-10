@@ -1,11 +1,12 @@
 import {useState} from 'react';
-import {App as AntdApp, Button, ConfigProvider, Drawer, Flex, Layout, Segmented, Space, theme} from "antd";
-import {FileImageOutlined, FontColorsOutlined} from "@ant-design/icons";
+import {App as AntdApp, Button, ConfigProvider, Flex, Layout, Segmented, Space, theme} from "antd";
+import {FileImageOutlined, FileOutlined, FontColorsOutlined, SettingOutlined} from "@ant-design/icons";
 import Predict from "./pages/Predict";
 import {useRequest} from "ahooks";
 import {LoadFromFile} from "../wailsjs/go/main/App";
 
 import './App.css'
+import Settings from "./components/Settings";
 
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
@@ -31,11 +32,12 @@ function App() {
                             }}
                             options={[
                                 {label: 'Text Predict Image', value: 1, icon: <FontColorsOutlined/>},
-                                {label: 'Image Predict Image', value: 2, icon: <FileImageOutlined/>},
+                                // {label: 'Image Predict Image', value: 2, icon: <FileImageOutlined/>},
                             ]}
                         />
                         <Space size={12}>
                             <Button
+                                icon={<FileOutlined />}
                                 loading={loadModelLoading}
                                 onClick={async () => {
                                     const result = await loadModel()
@@ -46,10 +48,12 @@ function App() {
                             >
                                 Select Model
                             </Button>
-                            <Button onClick={() => {
+                            <Button
+                                icon={<SettingOutlined />}
+                                onClick={() => {
                                 setOpen(true)
                             }}>
-                                Setting
+                                Settings
                             </Button>
                             <Button onClick={() => setIsDark((prevState) => !prevState)}>
                                 {isDark ? "Light Theme" : "Dark Theme"}
@@ -59,18 +63,12 @@ function App() {
                     {
                         model === 1 && <Predict hasLoadModel={hasLoadModel}/>
                     }
-                    <Drawer
-                        closeIcon={true}
-                        title="Basic Drawer"
-                        placement={"right"}
-                        closable={false}
+                    <Settings
                         open={open}
                         onClose={() => {
                             setOpen(false)
                         }}
-                    >
-
-                    </Drawer>
+                    />
                 </Layout.Content>
             </Layout>
         </AntdApp>

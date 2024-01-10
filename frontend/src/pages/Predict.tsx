@@ -6,7 +6,7 @@ import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 
 import '../App.css';
-import {RedoOutlined} from "@ant-design/icons";
+import {CaretRightOutlined, PlaySquareOutlined, RedoOutlined} from "@ant-design/icons";
 import {FC} from "react";
 
 type PredictImageProps = {
@@ -43,7 +43,6 @@ const PredictImage: FC<PredictImageProps> = (props) => {
     return <div>
         <Row justify={"space-between"}>
             <Col span={8}>
-
                 <Form
                     form={form}
                     initialValues={{
@@ -60,13 +59,14 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                     layout="vertical"
                 >
                     <Form.Item label="Prompt" name="Prompt">
-                        <Input.TextArea autoSize={{minRows: 2, maxRows: 6}} maxLength={75}/>
+                        <Input.TextArea showCount autoSize={{minRows: 2, maxRows: 6}} maxLength={75}/>
                     </Form.Item>
                     <Form.Item label="Negative Prompt" name="NegativePrompt">
-                        <Input.TextArea autoSize={{minRows: 2, maxRows: 6}} maxLength={75}/>
+                        <Input.TextArea showCount autoSize={{minRows: 2, maxRows: 6}} maxLength={75}/>
                     </Form.Item>
                     <Form.Item>
                         <Button
+                            icon={<PlaySquareOutlined />}
                             type="primary"
                             size={"large"}
                             style={{width: "100%"}}
