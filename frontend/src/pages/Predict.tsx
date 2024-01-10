@@ -46,11 +46,11 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                 <Form
                     form={form}
                     initialValues={{
-                        Prompt: "",
+                        Prompt: "a lovely cat",
                         NegativePrompt: "",
                         CfgScale: 7.0,
-                        Width: 512,
-                        Height: 512,
+                        Width: 256,
+                        Height: 256,
                         SampleMethod: 0,
                         SampleSteps: 20,
                         Seed: 42,

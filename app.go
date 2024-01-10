@@ -231,3 +231,21 @@ func (a *App) SaveImage(imageBase64 string) bool {
 
 	return true
 }
+
+func (a *App) GetFilePath(title string) string {
+	dialog, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{})
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return ""
+	}
+	return dialog
+}
+
+func (a *App) GetDirPath(title string) string {
+	dialog, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{})
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return ""
+	}
+	return dialog
+}

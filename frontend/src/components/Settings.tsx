@@ -1,7 +1,7 @@
-import {Col, Drawer, Form, Input, InputNumber, Row, Select, Skeleton, Switch} from "antd";
+import {Button, Col, Drawer, Form, Input, InputNumber, Row, Select, Spin, Switch} from "antd";
 import {FC} from "react";
 import {useRequest} from "ahooks";
-import {GetOptions} from "../../wailsjs/go/main/App";
+import {GetDirPath, GetFilePath, GetOptions, SetOptions} from "../../wailsjs/go/main/App";
 import {Environment} from "../../wailsjs/runtime";
 
 type SettingsProps = {
@@ -21,24 +21,35 @@ type SettingsProps = {
 // GpuEnable             bool
 const Settings: FC<SettingsProps> = (props) => {
     const [form] = Form.useForm()
-    const {data,loading} = useRequest(async () => {
+    const {data, loading} = useRequest(async () => {
         const platform = await Environment()
-        debugger
         const result = await GetOptions();
         form.setFieldsValue(result)
         return platform
     }, {})
+
+    const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {
+        await SetOptions(params)
+    }, {
+        manual: true
+    })
+
+    const VaePath = Form.useWatch('VaePath', form);
+    const TaesdPath = Form.useWatch('TaesdPath', form);
+    const LoraModelDir = Form.useWatch('LoraModelDir', form);
     return <Drawer
         closeIcon={true}
         title="Settings"
         placement={"right"}
         closable={false}
         open={props?.open}
-        onClose={() => {
+        onClose={async () => {
+            await setOptions(form.getFieldsValue())
             props.onClose()
         }}
     >
-        <Skeleton loading={loading}>
+        <Spin spinning={loading || setOptionsLoading}
+              tip={setOptionsLoading ? "Apply setting and reloading ..." : "Loading"}>
             <Form
                 form={form}
                 layout="vertical"
@@ -47,21 +58,63 @@ const Settings: FC<SettingsProps> = (props) => {
                     label="Vae Path"
                     name="VaePath"
                 >
-                    <Input type="file"/>
+                    <Button
+                        onClick={async () => {
+                            const path = await GetFilePath("Select Vae Path")
+                            if (path?.length > 0) {
+                                form.setFieldValue("VaePath", path)
+                            }
+                        }}
+                    >
+                        Select Vae Path
+                    </Button>
+                    <Input
+                        value={VaePath}
+                        readOnly
+                        bordered={false}
+                    />
                 </Form.Item>
                 <Form.Item
                     label="Taesd Path"
                     name="TaesdPath"
                 >
-                    <Input type="file"/>
+                    <Button
+                        onClick={async () => {
+                            const path = await GetFilePath("Select Taesd Path")
+                            if (path?.length > 0) {
+                                form.setFieldValue("TaesdPath", path)
+                            }
+                        }}
+                    >
+                        Select Taesd Path
+                    </Button>
+                    <Input
+                        value={TaesdPath}
+                        readOnly
+                        bordered={false}
+                    />
                 </Form.Item>
                 <Form.Item
                     label="Lora Model Dir"
                     name="LoraModelDir"
                 >
-                    <Input type="file"/>
+                    <Button
+                        onClick={async () => {
+                            const path = await GetDirPath("Lora Model Dir")
+                            if (path?.length > 0) {
+                                form.setFieldValue("LoraModelDir", path)
+                            }
+                        }}
+                    >
+                        Select Lora Model Dir
+                    </Button>
+                    <Input
+                        value={LoraModelDir}
+                        readOnly
+                        bordered={false}
+                    />
                 </Form.Item>
-                <Form.Item>
+                <Form.Item style={{marginBottom: 0}}>
                     <Row>
                         <Col span={12}>
                             <Form.Item
@@ -81,7 +134,7 @@ const Settings: FC<SettingsProps> = (props) => {
                     </Row>
                 </Form.Item>
 
-                <Form.Item>
+                <Form.Item style={{marginBottom: 0}}>
                     <Row>
                         <Col>
                             <Form.Item
@@ -141,22 +194,21 @@ const Settings: FC<SettingsProps> = (props) => {
                     label={"Schedule"}
                     name={"Schedule"}>
                     <Select
-                    options={[
-                        {label: "Default", value: 0},
-                        {label: "DISCRETE", value: 1},
-                        {label: "KARRAS", value: 2},
-                        {label: "N_SCHEDULES", value: 3},
-                    ]}
-
+                        options={[
+                            {label: "Default", value: 0},
+                            {label: "DISCRETE", value: 1},
+                            {label: "KARRAS", value: 2},
+                            {label: "N_SCHEDULES", value: 3},
+                        ]}
                     />
                 </Form.Item>
                 <Form.Item
                     label={"GPU Enable"}
                     name={"GpuEnable"}>
-                    <Switch disabled={data?.platform!="windows"}/>
+                    <Switch disabled={data?.platform != "windows"}/>
                 </Form.Item>
             </Form>
-        </Skeleton>
+        </Spin>
     </Drawer>
 }
 export default Settings
