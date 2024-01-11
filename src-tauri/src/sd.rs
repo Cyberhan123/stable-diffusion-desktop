@@ -1,22 +1,30 @@
 use std::ffi::CString;
 use std::os::raw::{c_int, c_float};
+use std::slice;
+use base64::{alphabet, Engine, engine};
+use base64::engine::general_purpose;
+use image::{DynamicImage, RgbImage};
 
 pub mod csd {
     use std::os::raw::{c_char, c_float, c_int, c_uint, c_void};
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub struct sd_ctx_t;
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub struct upscaler_ctx_t;
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub enum rng_type_t {
         STD_DEFAULT_RNG,
         CUDA_RNG,
     }
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub enum sample_method_t {
         EULER_A,
         EULER,
@@ -30,6 +38,7 @@ pub mod csd {
     }
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub enum schedule_t {
         DEFAULT,
         DISCRETE,
@@ -38,6 +47,7 @@ pub mod csd {
     }
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub enum sd_type_t {
         SD_TYPE_F32 = 0,
         SD_TYPE_F16 = 1,
@@ -60,6 +70,7 @@ pub mod csd {
     }
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub enum sd_log_level_t {
         SD_LOG_DEBUG,
         SD_LOG_INFO,
@@ -68,6 +79,7 @@ pub mod csd {
     }
 
     #[repr(C)]
+    #[allow(non_camel_case_types)]
     pub struct sd_image_t {
         pub width: c_uint,
         pub height: c_uint,
@@ -172,13 +184,10 @@ impl StableDiffusion {
         if ctx.is_null() {
             Err("Failed to create sd_ctx_t".to_string())
         } else {
-            Ok(csd { ctx })
+            Ok(StableDiffusion { ctx })
         }
     }
 
-    // Add methods to SdCtx as needed...
-
-    // Example method:
     pub fn txt2img(
         &self,
         prompt: &str,
@@ -191,7 +200,7 @@ impl StableDiffusion {
         sample_steps: c_int,
         seed: i64,
         batch_count: c_int,
-    ) -> Option<SdImage> {
+    ) -> Option<Vec<String>> {
         let prompt_c = CString::new(prompt).expect("CString::new failed");
         let negative_prompt_c = CString::new(negative_prompt).expect("CString::new failed");
 
@@ -214,7 +223,7 @@ impl StableDiffusion {
         if result.is_null() {
             None
         } else {
-            Some(SdImage { inner: result })
+            Some(SdImage::new(result, batch_count as usize).to_base64_png_all())
         }
     }
 }
@@ -229,8 +238,45 @@ impl Drop for StableDiffusion {
 
 pub struct SdImage {
     inner: *mut csd::sd_image_t,
+    sd_image_slice: * [csd::sd_image_t],
 }
 
+impl SdImage {
+    pub fn new(inner: *mut csd::sd_image_t, size: usize) -> Self {
+        SdImage {
+            inner,
+            sd_image_slice: unsafe {
+                std::slice::from_raw_parts(inner, size)
+            },
+        }
+    }
+    pub fn to_base64_png_all(&self) -> Vec<String> {
+        self.sd_image_slice
+            .iter()
+            .map(|sd_image| {
+                unsafe {
+                    let width = (*sd_image).width;
+                    let height = (*sd_image).height;
+                    let channel = (*sd_image).channel;
+
+                    let data = slice::from_raw_parts((*sd_image).data, (width * height * channel) as usize);
+
+                    let rgb_image = RgbImage::from_raw(width, height, data.to_vec()).unwrap();
+
+                    let dynamic_image = DynamicImage::ImageRgb8(rgb_image);
+
+                    let mut buffer = Vec::new();
+                    dynamic_image
+                        .write_to(&mut buffer, image::ImageOutputFormat::Png)
+                        .expect("Failed to encode image as PNG");
+                    const URL_ENG: engine::GeneralPurpose =
+                        engine::GeneralPurpose::new(&alphabet::URL_SAFE, general_purpose::NO_PAD);
+                    URL_ENG.encode(buffer)
+                }
+            })
+            .collect()
+    }
+}
 
 
 
