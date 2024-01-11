@@ -3,7 +3,7 @@ import {useRef, useState} from "react";
 import {Terminal as XTerminal} from "xterm";
 import "xterm/css/xterm.css";
 import {FitAddon} from "xterm-addon-fit";
-import {EventsOn} from "../../wailsjs/runtime";
+// import {EventsOn} from "../../wailsjs/runtime";
 import {Select} from "antd";
 
 const Terminal = () => {

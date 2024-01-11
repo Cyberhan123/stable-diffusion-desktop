@@ -3,7 +3,7 @@ import {App as AntdApp, Button, ConfigProvider, Flex, Layout, Segmented, Space, 
 import {FileImageOutlined, FileOutlined, FontColorsOutlined, SettingOutlined} from "@ant-design/icons";
 import Predict from "./pages/Predict";
 import {useRequest} from "ahooks";
-import {LoadFromFile} from "../wailsjs/go/main/App";
+// import {LoadFromFile} from "../wailsjs/go/main/App";
 
 import './App.css'
 import Settings from "./components/Settings";
@@ -16,7 +16,7 @@ function App() {
     const [open, setOpen] = useState(false);
     const [isDark, setIsDark] = useState<boolean>(window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false);
     const {runAsync: loadModel, loading: loadModelLoading} = useRequest(async () => {
-        return await LoadFromFile()
+        // return await LoadFromFile()
     }, {
         manual: true
     })

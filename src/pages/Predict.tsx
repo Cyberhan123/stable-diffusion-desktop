@@ -1,13 +1,13 @@
 import ImageGallery from "../components/ImageGallery";
 import {useRequest} from "ahooks";
-import {Predict} from "../../wailsjs/go/main/App";
 import {Button, Col, Flex, Form, Input, Row, Select, Slider} from "antd";
 import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 
 import '../App.css';
-import {CaretRightOutlined, PlaySquareOutlined, RedoOutlined} from "@ant-design/icons";
+import {PlaySquareOutlined, RedoOutlined} from "@ant-design/icons";
 import {FC} from "react";
+import {txt2img} from "../api/sd.ts";
 
 type PredictImageProps = {
     hasLoadModel: boolean
@@ -35,7 +35,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
         fullParams.Seed = Number(fullParams.Seed)
         fullParams.BatchCount = Number(fullParams.BatchCount)
         fullParams.OutputsImageType = "PNG"
-        return await Predict(params.Prompt, fullParams)
+        return await txt2img(params.Prompt, fullParams)
     }, {
         manual: true
     })
@@ -66,7 +66,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                     </Form.Item>
                     <Form.Item>
                         <Button
-                            icon={<PlaySquareOutlined />}
+                            icon={<PlaySquareOutlined/>}
                             type="primary"
                             size={"large"}
                             style={{width: "100%"}}
