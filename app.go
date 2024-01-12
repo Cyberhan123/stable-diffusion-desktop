@@ -34,7 +34,7 @@ func NewApp() *App {
 		options.GpuEnable = false
 	}
 	options.FreeParamsImmediately = false
-	options.Threads = goruntime.NumCPU()
+	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
 	return &App{
 		options: &options,
 	}

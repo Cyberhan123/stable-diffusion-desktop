@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.21.4
 
 require (
-	github.com/seasonjs/stable-diffusion v0.1.1
+	github.com/seasonjs/stable-diffusion v0.1.2
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 
