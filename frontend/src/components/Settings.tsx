@@ -149,7 +149,7 @@ const Settings: FC<SettingsProps> = (props) => {
                                 label="Free Params Immediately"
                                 name="FreeParamsImmediately"
                             >
-                                <Switch/>
+                                <Switch disabled/>
                             </Form.Item>
                         </Col>
                         <Col>

@@ -33,7 +33,7 @@ func NewApp() *App {
 	} else {
 		options.GpuEnable = false
 	}
-	options.FreeParamsImmediately = true
+	options.FreeParamsImmediately = false
 	options.Threads = goruntime.NumCPU()
 	return &App{
 		options: &options,
