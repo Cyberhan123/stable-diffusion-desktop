@@ -155,7 +155,14 @@ func (a *App) SetOptions(option sd.Options) {
 }
 
 func (a *App) SaveImage(imageBase64 string) bool {
-	dialog, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{})
+	dialog, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "Image Files (*.png)",
+				Pattern:     "*.png",
+			},
+		},
+	})
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return false
@@ -198,7 +205,7 @@ func (a *App) SaveImage(imageBase64 string) bool {
 		return false
 	}
 
-	file, err := os.Create(dialog)
+	file, err := os.Create(dialog + ".png")
 	if err != nil {
 		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
 			Type:    runtime.InfoDialog,
