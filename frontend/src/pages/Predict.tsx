@@ -66,6 +66,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                     </Form.Item>
                     <Form.Item>
                         <Button
+                            loading={predictLoading}
                             icon={<PlaySquareOutlined />}
                             type="primary"
                             size={"large"}
