@@ -6,7 +6,7 @@ import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 
 import '../App.css';
-import {CaretRightOutlined, PlaySquareOutlined, RedoOutlined} from "@ant-design/icons";
+import {PlaySquareOutlined, RedoOutlined} from "@ant-design/icons";
 import {FC} from "react";
 
 type PredictImageProps = {
@@ -48,6 +48,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                     initialValues={{
                         Prompt: "a lovely cat",
                         NegativePrompt: "",
+                        ClipSkip: 0,
                         CfgScale: 7.0,
                         Width: 256,
                         Height: 256,
@@ -67,7 +68,7 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                     <Form.Item>
                         <Button
                             loading={predictLoading}
-                            icon={<PlaySquareOutlined />}
+                            icon={<PlaySquareOutlined/>}
                             type="primary"
                             size={"large"}
                             style={{width: "100%"}}
@@ -80,42 +81,60 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                             Generate
                         </Button>
                     </Form.Item>
-                    <Form.Item label="Sampler Method" name="SampleMethod">
-                        <Select
-                            options={[
-                                {
-                                    label: "Euler A",
-                                    value: 0
-                                },
-                                {
-                                    label: "Euler",
-                                    value: 1
-                                },
-                                {
-                                    label: "Heun",
-                                    value: 2
-                                },
-                                {
-                                    label: "DPM2",
-                                    value: 3
-                                },
-                                {
-                                    label: "DPM++ 2S A",
-                                    value: 4
-                                },
-                                {
-                                    label: "DPM++ 2M",
-                                    value: 5
-                                },
-                                {
-                                    label: "DPM++ 2M v2",
-                                    value: 6
-                                },
-                                {
-                                    label: "LCM",
-                                    value: 7
-                                }]}
-                        />
+                    <Form.Item style={{marginBottom: 0}}>
+                        <Row>
+                            <Col span={12}>
+                                <Form.Item label={"Sampler Method"} name={"SampleMethod"}>
+                                    <Select
+                                        style={{width:"90%"}}
+                                        options={[
+                                            {
+                                                label: "Euler A",
+                                                value: 0
+                                            },
+                                            {
+                                                label: "Euler",
+                                                value: 1
+                                            },
+                                            {
+                                                label: "Heun",
+                                                value: 2
+                                            },
+                                            {
+                                                label: "DPM2",
+                                                value: 3
+                                            },
+                                            {
+                                                label: "DPM++ 2S A",
+                                                value: 4
+                                            },
+                                            {
+                                                label: "DPM++ 2M",
+                                                value: 5
+                                            },
+                                            {
+                                                label: "DPM++ 2M v2",
+                                                value: 6
+                                            },
+                                            {
+                                                label: "LCM",
+                                                value: 7
+                                            }]
+                                        }
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label={"Clip Skip"} name={"ClipSkip"}>
+                                    <Slider
+                                        min={0}
+                                        max={50}
+                                        step={1}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
                     </Form.Item>
                     <Form.Item style={{marginBottom: 0}}>
                         <Row>
@@ -135,7 +154,6 @@ const PredictImage: FC<PredictImageProps> = (props) => {
                                         max={20}
                                         step={0.5}
                                     />
-
                                 </Form.Item>
                             </Col>
                         </Row>
