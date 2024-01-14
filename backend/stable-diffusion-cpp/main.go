@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"errors"
+	"github.com/cyberhan123/stable-diffusion-desktop/backend/stable-diffusion-cpp/api"
 	"github.com/seasonjs/stable-diffusion"
 	"io"
 	"log"
@@ -30,14 +31,7 @@ func NewApp(options sd.Options) (*App, error) {
 	}, nil
 }
 
-type LoadFromFileArgs struct {
-	ModelPath string
-}
-
-type LoadFromFileResult struct {
-}
-
-func (a *App) LoadFromFile(arg LoadFromFileArgs, result *LoadFromFileResult) error {
+func (a *App) LoadFromFile(arg api.LoadFromFileArgs, result *api.LoadFromFileResult) error {
 	err := a.sd.LoadFromFile(arg.ModelPath)
 	if err != nil {
 		log.Fatal("load model error:", err)
@@ -48,10 +42,7 @@ func (a *App) LoadFromFile(arg LoadFromFileArgs, result *LoadFromFileResult) err
 	return err
 }
 
-type SetOptionsResult struct {
-}
-
-func (a *App) SetOptions(options sd.Options, result *SetOptionsResult) error {
+func (a *App) SetOptions(options sd.Options, result *api.SetOptionsResult) error {
 	a.options = &options
 	a.sd.SetOptions(options)
 	return nil
@@ -62,16 +53,7 @@ func (a *App) GetOptions(arg struct{}, result *sd.Options) error {
 	return nil
 }
 
-type PredictArgs struct {
-	Prompt string
-	Params sd.FullParams
-}
-
-type PredictResult struct {
-	Images []string
-}
-
-func (a *App) Predict(args PredictArgs, result *PredictResult) error {
+func (a *App) Predict(args api.PredictArgs, result *api.PredictResult) error {
 	if len(args.Prompt) == 0 {
 		log.Println("prompt is empty")
 		return errors.New("prompt is empty")
@@ -100,23 +82,13 @@ func (a *App) Predict(args PredictArgs, result *PredictResult) error {
 		images = append(images, "data:image/png;base64,"+base64String)
 	}
 
-	*result = PredictResult{
+	*result = api.PredictResult{
 		Images: images,
 	}
 	return nil
 }
 
-type PredictImageArgs struct {
-	InitImage string
-	Prompt    string
-	Params    sd.FullParams
-}
-
-type PredictImageResult struct {
-	images []string
-}
-
-func (a *App) PredictImage(args PredictImageArgs, result *PredictImageResult) error {
+func (a *App) PredictImage(args api.PredictImageArgs, result *api.PredictImageResult) error {
 	if !a.modelLoaded {
 		log.Println("model not loaded")
 		return errors.New("model not loaded")
@@ -147,33 +119,30 @@ func (a *App) PredictImage(args PredictImageArgs, result *PredictImageResult) er
 		images = append(images, "data:image/png;base64,"+base64String)
 	}
 
-	*result = PredictImageResult{
-		images: images,
+	*result = api.PredictImageResult{
+		Images: images,
 	}
 	return nil
 }
 
-type GetLogsArgs struct {
-	Index int
-	Size  int
-	Total int
-}
-
-type GetLogsResult struct {
-	logs []string
-}
-
-func (a *App) GetLogs(args GetLogsArgs, result *[]string) error {
+func (a *App) GetLogs(args api.GetLogsArgs, result *api.GetLogsArgs) error {
 	//TODO: implement
 	return nil
 }
 
 func main() {
+	defer func() {
+		log.Println("server exit, recover from panic")
+
+		recover()
+	}()
+
 	app, err := NewApp(sd.DefaultOptions)
 	if err != nil {
 		log.Fatal("create server error: ", err)
 		return
 	}
+
 	err = rpc.Register(app)
 	if err != nil {
 		log.Fatal("register rpc error", err)
