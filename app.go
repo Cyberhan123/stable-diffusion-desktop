@@ -326,11 +326,8 @@ func (a *App) saveUserSetting() bool {
 
 func (a *App) defaultUserSetting() *sd.Options {
 	options := sd.DefaultOptions
-	if goruntime.GOOS == "windows" {
-		options.GpuEnable = true
-	} else {
-		options.GpuEnable = false
-	}
+	// all always keep false until we can introduce cuda
+	options.GpuEnable = false
 	options.FreeParamsImmediately = false
 	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
 	return &options
