@@ -112,7 +112,17 @@ func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []str
 	if !a.modelLoaded {
 		return nil
 	}
-	decodedBytes, err := base64.StdEncoding.DecodeString(initImage)
+
+	if len(initImage) == 0 {
+		return nil
+	}
+
+	parts := strings.Split(initImage, ";base64,")
+	if len(parts) != 2 {
+		return nil
+	}
+
+	decodedBytes, err := base64.StdEncoding.DecodeString(parts[1])
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return nil
@@ -205,7 +215,11 @@ func (a *App) SaveImage(imageBase64 string) bool {
 		return false
 	}
 
-	file, err := os.Create(dialog + ".png")
+	if filepath.Ext(dialog) != ".png" {
+		dialog += ".png"
+	}
+
+	file, err := os.Create(dialog)
 	if err != nil {
 		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
 			Type:    runtime.InfoDialog,
@@ -331,4 +345,39 @@ func (a *App) defaultUserSetting() *sd.Options {
 	options.FreeParamsImmediately = false
 	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
 	return &options
+}
+
+type InitImageResult struct {
+	path        string
+	base64Image string
+}
+
+func (a *App) GetInitImage() *InitImageResult {
+	path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Filters: []runtime.FileFilter{{
+			DisplayName: "Image Files (*.png)",
+			Pattern:     "*.png",
+		}},
+	})
+
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return nil
+	}
+
+	if len(path) > 0 {
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			runtime.LogError(a.ctx, err.Error())
+			return nil
+		}
+	}
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	base64String := base64.StdEncoding.EncodeToString(file)
+	return &InitImageResult{
+		path:        path,
+		base64Image: "data:image/png;base64," + base64String,
+	}
 }
