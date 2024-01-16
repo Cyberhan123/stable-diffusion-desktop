@@ -1,22 +1,13 @@
 import ImageGallery from "../components/ImageGallery";
 import {useRequest} from "ahooks";
-import {Predict, PredictImage} from "../../wailsjs/go/main/App";
-import {Button, Col, Collapse, CollapseProps, Flex, Form, Input, Row, Select, Slider, Upload} from "antd";
+import {GetInitImage, Predict, PredictImage} from "../../wailsjs/go/main/App";
+import {Button, Col, Collapse, CollapseProps, Flex, Form, Input, Row, Select, Slider} from "antd";
 import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 import {PlaySquareOutlined, PlusOutlined, RedoOutlined} from "@ant-design/icons";
 import {FC, useEffect, useState} from "react";
 
 import './Predict.css';
-
-
-const getBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = (error) => reject(error);
-    });
 
 type ValidateStatus = Parameters<typeof Form.Item>[0]['validateStatus'];
 
@@ -28,11 +19,13 @@ type PredictImageProps = {
 const PredictImageFC: FC<PredictImageProps> = (props) => {
     const [form] = Form.useForm();
     const [initImage, setInitImage] = useState<{
-        value: string;
+        previewImage: string;
+        path: string;
         validateStatus?: ValidateStatus;
         errorMsg?: string | null;
     }>({
-        value: "",
+        previewImage: "",
+        path: "",
         validateStatus: null,
         errorMsg: null
     })
@@ -63,11 +56,11 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
         if (props.predictType === "text") {
             return await Predict(params.Prompt, fullParams)
         }
-        debugger
-        return await PredictImage(initImage?.value ?? "", params.Prompt, fullParams)
+        return await PredictImage(initImage?.path ?? "", params.Prompt, fullParams)
     }, {
         manual: true
     })
+
 
     const items: CollapseProps['items'] = [
         {
@@ -222,45 +215,73 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                     {
                         props.predictType === "image" &&
                         <Form.Item label="Image" name="InitImage" style={{marginBottom: 0}}>
-                            <Upload
-                                accept={"image/png,image/jpeg"}
-                                name="avatar"
-                                listType="picture-card"
-                                className="avatar-uploader"
-                                showUploadList={false}
-                                beforeUpload={async (file) => {
-                                    const isPNG = file.type === 'image/png';
-                                    if (!isPNG) {
+                            {/*<Upload*/}
+                            {/*    accept={"image/png,image/jpeg"}*/}
+                            {/*    name="avatar"*/}
+                            {/*    listType="picture-card"*/}
+                            {/*    className="avatar-uploader"*/}
+                            {/*    showUploadList={false}*/}
+                            {/*    beforeUpload={async (file) => {*/}
+                            {/*        const isPNG = file.type === 'image/png';*/}
+                            {/*        if (!isPNG) {*/}
+                            {/*            setInitImage({*/}
+                            {/*                value: "",*/}
+                            {/*                validateStatus: "error",*/}
+                            {/*                errorMsg: "Please upload a PNG file"*/}
+                            {/*            })*/}
+                            {/*        } else {*/}
+                            {/*            const base64 = await getBase64(file)*/}
+                            {/*            setInitImage({*/}
+                            {/*                value: base64,*/}
+                            {/*                validateStatus: null,*/}
+                            {/*                errorMsg: null*/}
+                            {/*            })*/}
+                            {/*        }*/}
+                            {/*        return isPNG || Upload.LIST_IGNORE;*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    {(initImage?.value?.length > 0) ? <img*/}
+                            {/*            style={{width: "100%"}}*/}
+                            {/*            src={initImage.value}*/}
+                            {/*            alt={"initImage"}*/}
+                            {/*        /> :*/}
+                            {/*        <button style={{border: 0, background: 'none'}} type="button">*/}
+                            {/*            <PlusOutlined style={props?.isDark ? {color: "#fff"} : {}}/>*/}
+                            {/*            <div style={props?.isDark ? {*/}
+                            {/*                color: "#fff",*/}
+                            {/*                marginTop: 8*/}
+                            {/*            } : {marginTop: 8}}>Upload*/}
+                            {/*            </div>*/}
+                            {/*        </button>}*/}
+                            {/*</Upload>*/}
+                            <Button
+                                type="dashed" style={{width: 100, height: 100}}
+                                onClick={async () => {
+                                    const result = await GetInitImage()
+                                    if (!!result && (result?.Path?.length ?? 0) > 0) {
                                         setInitImage({
-                                            value: "",
-                                            validateStatus: "error",
-                                            errorMsg: "Please upload a PNG file"
-                                        })
-                                    } else {
-                                        const base64 = await getBase64(file)
-                                        setInitImage({
-                                            value: base64,
+                                            previewImage: result.Base64Image,
+                                            path: result.Path,
                                             validateStatus: null,
                                             errorMsg: null
                                         })
                                     }
-                                    return isPNG || Upload.LIST_IGNORE;
                                 }}
                             >
-                                {(initImage?.value?.length > 0) ? <img
+                                {(initImage?.previewImage?.length > 0) ? <img
                                         style={{width: "100%"}}
-                                        src={initImage.value}
+                                        src={initImage.previewImage}
                                         alt={"initImage"}
                                     /> :
-                                    <button style={{border: 0, background: 'none'}} type="button">
+                                    <div style={{border: 0, background: 'none'}}>
                                         <PlusOutlined style={props?.isDark ? {color: "#fff"} : {}}/>
                                         <div style={props?.isDark ? {
                                             color: "#fff",
-                                            marginTop: 8
+                                            marginTop: 5
                                         } : {marginTop: 8}}>Upload
                                         </div>
-                                    </button>}
-                            </Upload>
+                                    </div>}
+                            </Button>
                         </Form.Item>
                     }
                     <Form.Item label="Prompt" name="Prompt">

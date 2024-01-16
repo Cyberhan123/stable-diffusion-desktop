@@ -117,18 +117,13 @@ func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []str
 		return nil
 	}
 
-	parts := strings.Split(initImage, ";base64,")
-	if len(parts) != 2 {
-		return nil
-	}
-
-	decodedBytes, err := base64.StdEncoding.DecodeString(parts[1])
+	file, err := os.ReadFile(initImage)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
 
-	reader := bytes.NewReader(decodedBytes)
+	reader := bytes.NewReader(file)
 
 	var writers []io.Writer
 	for i := 0; i < params.BatchCount; i++ {
@@ -348,8 +343,8 @@ func (a *App) defaultUserSetting() *sd.Options {
 }
 
 type InitImageResult struct {
-	path        string
-	base64Image string
+	Path        string
+	Base64Image string
 }
 
 func (a *App) GetInitImage() *InitImageResult {
@@ -366,18 +361,19 @@ func (a *App) GetInitImage() *InitImageResult {
 	}
 
 	if len(path) > 0 {
-		if _, err := os.Stat(path); os.IsNotExist(err) {
+		if _, err := os.Stat(path); err != nil {
 			runtime.LogError(a.ctx, err.Error())
 			return nil
 		}
 	}
 	file, err := os.ReadFile(path)
 	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
 	base64String := base64.StdEncoding.EncodeToString(file)
 	return &InitImageResult{
-		path:        path,
-		base64Image: "data:image/png;base64," + base64String,
+		Path:        path,
+		Base64Image: "data:image/png;base64," + base64String,
 	}
 }

@@ -2,16 +2,14 @@ module github.com/cyberhan123/stable-diffusion-desktop
 
 go 1.21
 
-toolchain go1.21.4
-
 require (
-	github.com/seasonjs/stable-diffusion v0.1.2
+	github.com/seasonjs/stable-diffusion v0.1.4-0.20240116140801-8c85ffffcc8b
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/ebitengine/purego v0.6.0-alpha.2.0.20231129131118-33b97fd6a58b // indirect
+	github.com/ebitengine/purego v0.6.0-alpha.2.0.20240113142936-a546a4d9ae4b // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
