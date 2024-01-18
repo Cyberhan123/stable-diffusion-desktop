@@ -24,4 +24,4 @@ Also thanks to [Amin456789](https://github.com/Amin456789) who started using thi
 And the author [leejet](https://github.com/leejet) of `stable-diffusion.cpp` who has been working hard has helped me a lot and allowed me to learn a lot of c/c++ and cmake knowledge.
 
 Finally, thank you to everyone who uses this application and will use this application. 
-Your feedback and starts are the motivation for me to continue development.
+Your feedback and star are the motivation for me to continue development.
