@@ -1,13 +1,16 @@
 import {Button, Col, Drawer, Form, Input, InputNumber, Row, Select, Spin, Switch} from "antd";
-import {FC} from "react";
+import {FC, useEffect} from "react";
 import {useRequest} from "ahooks";
-import {GetDirPath, GetFilePath, GetOptions, SetOptions} from "../../wailsjs/go/main/App";
+import {GetDirPath, GetFilePath} from "../../wailsjs/go/main/App";
 import {Environment} from "../../wailsjs/runtime";
 import {isEqual} from "lodash-es";
 
 type SettingsProps = {
     open: boolean;
     onClose: () => void;
+    onOptionsChange: (options: any) => Promise<void>;
+    options: any;
+    optionsLoading: boolean;
 }
 // VaePath               string
 // TaesdPath             string
@@ -25,20 +28,25 @@ const Settings: FC<SettingsProps> = (props) => {
     const {data: env} = useRequest(async () => {
         return await Environment()
     })
-    const {data, loading} = useRequest(async () => {
-        const result = await GetOptions();
-        form.setFieldsValue(result)
-        return result
-    }, {
-        ready: !!props.open,
-        refreshDeps: [props.open]
-    })
+    useEffect(() => {
+        if (!!props.open) {
+            form.setFieldsValue(props.options)
+        }
+    }, [props.open])
+    // const {data, loading} = useRequest(async () => {
+    //     const result = await GetOptions();
+    //     form.setFieldsValue(result)
+    //     return result
+    // }, {
+    //     ready: !!props.open,
+    //     refreshDeps: [props.open]
+    // })
 
-    const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {
-        await SetOptions(params)
-    }, {
-        manual: true
-    })
+    // const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {
+    //     await SetOptions(params)
+    // }, {
+    //     manual: true
+    // })
 
     const VaePath = Form.useWatch('VaePath', form);
     const TaesdPath = Form.useWatch('TaesdPath', form);
@@ -50,14 +58,14 @@ const Settings: FC<SettingsProps> = (props) => {
         closable={false}
         open={props?.open}
         onClose={async () => {
-            if (!isEqual(form.getFieldsValue(), data)) {
-                await setOptions(form.getFieldsValue())
+            if (!isEqual(form.getFieldsValue(), props.options)) {
+                await props.onOptionsChange(form.getFieldsValue())
             }
             props.onClose()
         }}
     >
-        <Spin spinning={loading || setOptionsLoading}
-              tip={setOptionsLoading ? "Apply setting and reloading ..." : "Loading"}>
+        <Spin spinning={props.optionsLoading}
+              tip={props.optionsLoading ? "Apply setting and reloading ..." : "Loading"}>
             <Form
                 form={form}
                 layout="vertical"

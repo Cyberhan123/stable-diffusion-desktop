@@ -3,7 +3,7 @@ import {App as AntdApp, Button, ConfigProvider, Flex, Layout, Segmented, Space, 
 import {AlertOutlined, FileImageOutlined, FileOutlined, FontColorsOutlined, SettingOutlined} from "@ant-design/icons";
 import Predict from "./pages/Predict";
 import {useRequest} from "ahooks";
-import {LoadFromFile} from "../wailsjs/go/main/App";
+import {GetOptions, LoadFromFile, SetOptions} from "../wailsjs/go/main/App";
 import Settings from "./components/Settings";
 
 import './App.css'
@@ -20,6 +20,18 @@ function App() {
     }, {
         manual: true
     })
+    const {data: options, loading: optionsLoading} = useRequest(async () => {
+        const result = await GetOptions();
+        return result
+    }, {
+        ready: !!open,
+        refreshDeps: [open]
+    })
+    const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {
+        await SetOptions(params)
+    }, {
+        manual: true
+    })
     return <ConfigProvider theme={{algorithm: isDark ? darkAlgorithm : defaultAlgorithm}}>
         <AntdApp>
             <Layout>
@@ -27,8 +39,20 @@ function App() {
                     <Flex justify={"space-between"}>
                         <Segmented
                             value={model}
-                            onChange={(value) => {
+                            onChange={async (value) => {
                                 setModel(value)
+                                if (value === "text") {
+                                    await setOptions({
+                                        ...options,
+                                        VaeDecodeOnly: true,
+                                    })
+                                }
+                                if (value === "image") {
+                                    await setOptions({
+                                        ...options,
+                                        VaeDecodeOnly: false,
+                                    })
+                                }
                             }}
                             options={[
                                 {label: 'Text Predict Image', value: "text", icon: <FontColorsOutlined/>},
@@ -38,7 +62,7 @@ function App() {
                         <Space size={12}>
                             <Button
                                 icon={<FileOutlined/>}
-                                loading={loadModelLoading}
+                                loading={loadModelLoading || optionsLoading || setOptionsLoading}
                                 onClick={async () => {
                                     const result = await loadModel()
                                     if (result) {
@@ -62,9 +86,14 @@ function App() {
                             </Button>
                         </Space>
                     </Flex>
-                    <Predict hasLoadModel={hasLoadModel} predictType={model} isDark={isDark}/>
+                    <Predict hasLoadModel={hasLoadModel} predictType={model} isDark={isDark} loading={loadModelLoading || optionsLoading || setOptionsLoading}/>
                     <Settings
                         open={open}
+                        optionsLoading={setOptionsLoading || optionsLoading || loadModelLoading}
+                        options={options}
+                        onOptionsChange={async (options) => {
+                            await setOptions(options)
+                        }}
                         onClose={() => {
                             setOpen(false)
                         }}
