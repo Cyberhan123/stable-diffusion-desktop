@@ -1,12 +1,12 @@
 import {useState} from 'react';
 import {App as AntdApp, Button, ConfigProvider, Flex, Layout, Segmented, Space, theme} from "antd";
-import {FileImageOutlined, FileOutlined, FontColorsOutlined, SettingOutlined} from "@ant-design/icons";
+import {AlertOutlined, FileImageOutlined, FileOutlined, FontColorsOutlined, SettingOutlined} from "@ant-design/icons";
 import Predict from "./pages/Predict";
 import {useRequest} from "ahooks";
 import {LoadFromFile} from "../wailsjs/go/main/App";
+import Settings from "./components/Settings";
 
 import './App.css'
-import Settings from "./components/Settings";
 
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
@@ -55,7 +55,9 @@ function App() {
                                 }}>
                                 Settings
                             </Button>
-                            <Button onClick={() => setIsDark((prevState) => !prevState)}>
+                            <Button
+                                icon={<AlertOutlined/>}
+                                onClick={() => setIsDark((prevState) => !prevState)}>
                                 {isDark ? "Light Theme" : "Dark Theme"}
                             </Button>
                         </Space>
