@@ -3,7 +3,7 @@
 Hello everyone, I am Cyberhan.
 
 With the rise of `chatgpt`, I became interested in AI, and more coincidentally, I came into contact with `llama.cpp`. 
-I am a full-stack developer (full-stack development), but I am not familiar with AI development, so I I made the wrong decision to get started.
+I am a full-stack developer, but I am not familiar with AI development, so I I made the wrong decision to get started.
 I bought the cheapest AMD 7900xtx based on the video memory.
 I found that it couldn't be used on Windows. 
 I was tortured by switching between Linux and Windows until ggml and AMD supported Windows.
