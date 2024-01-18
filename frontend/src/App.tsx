@@ -73,6 +73,7 @@ function App() {
                                 Select Model
                             </Button>
                             <Button
+                                loading={loadModelLoading || optionsLoading || setOptionsLoading}
                                 icon={<SettingOutlined/>}
                                 onClick={() => {
                                     setOpen(true)
