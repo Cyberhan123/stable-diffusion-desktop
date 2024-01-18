@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	sd "github.com/seasonjs/stable-diffusion"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -27,22 +28,16 @@ type App struct {
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	options := sd.DefaultOptions
-	if goruntime.GOOS == "windows" {
-		options.GpuEnable = true
-	} else {
-		options.GpuEnable = false
-	}
-	options.FreeParamsImmediately = false
-	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
-	return &App{
-		options: &options,
-	}
+	return &App{}
 }
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
+	a.options = a.defaultUserSetting()
+
+	a.loadUserSetting()
+
 	model, err := sd.NewAutoModel(*a.options)
 	if err != nil {
 		runtime.LogError(ctx, err.Error())
@@ -117,13 +112,18 @@ func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []str
 	if !a.modelLoaded {
 		return nil
 	}
-	decodedBytes, err := base64.StdEncoding.DecodeString(initImage)
+
+	if len(initImage) == 0 {
+		return nil
+	}
+
+	file, err := os.ReadFile(initImage)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
 
-	reader := bytes.NewReader(decodedBytes)
+	reader := bytes.NewReader(file)
 
 	var writers []io.Writer
 	for i := 0; i < params.BatchCount; i++ {
@@ -153,11 +153,21 @@ func (a *App) GetOptions() sd.Options {
 func (a *App) SetOptions(option sd.Options) {
 	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
 	a.options = &option
-	a.sd.SetOptions(option)
+	if a.modelLoaded || len(a.modelPath) > 0 {
+		a.sd.SetOptions(option)
+	}
+	a.saveUserSetting()
 }
 
 func (a *App) SaveImage(imageBase64 string) bool {
-	dialog, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{})
+	dialog, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "Image Files (*.png)",
+				Pattern:     "*.png",
+			},
+		},
+	})
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return false
@@ -198,6 +208,10 @@ func (a *App) SaveImage(imageBase64 string) bool {
 		})
 		runtime.LogError(a.ctx, err.Error())
 		return false
+	}
+
+	if filepath.Ext(dialog) != ".png" {
+		dialog += ".png"
 	}
 
 	file, err := os.Create(dialog)
@@ -248,4 +262,118 @@ func (a *App) GetDirPath(title string) string {
 		return ""
 	}
 	return dialog
+}
+
+func (a *App) loadUserSetting() bool {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+
+	appDataDir := filepath.Join(homeDir, "stable-diffusion-desktop")
+	if _, err := os.Stat(appDataDir); os.IsNotExist(err) {
+		err = os.MkdirAll(appDataDir, 0700)
+		if err != nil {
+			runtime.LogError(a.ctx, err.Error())
+			return false
+		}
+		a.saveUserSetting()
+		return true
+	}
+
+	settingFile, err := os.ReadFile(filepath.Join(appDataDir, "options.json"))
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		a.options = a.defaultUserSetting()
+		return false
+	}
+
+	var settings sd.Options
+
+	err = json.Unmarshal(settingFile, &settings)
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		a.options = a.defaultUserSetting()
+		return false
+	}
+
+	a.options = &settings
+	return true
+}
+
+func (a *App) saveUserSetting() bool {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		a.options = a.defaultUserSetting()
+		return false
+	}
+
+	appDataDir := filepath.Join(homeDir, "stable-diffusion-desktop")
+
+	settingFile, err := os.Create(filepath.Join(appDataDir, "options.json"))
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+	defer settingFile.Close()
+
+	settingJson, err := json.Marshal(a.options)
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+
+	_, err = settingFile.Write(settingJson)
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return false
+	}
+	return true
+}
+
+func (a *App) defaultUserSetting() *sd.Options {
+	options := sd.DefaultOptions
+	// all always keep false until we can introduce cuda
+	options.GpuEnable = false
+	options.FreeParamsImmediately = false
+	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
+	return &options
+}
+
+type InitImageResult struct {
+	Path        string
+	Base64Image string
+}
+
+func (a *App) GetInitImage() *InitImageResult {
+	path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Filters: []runtime.FileFilter{{
+			DisplayName: "Image Files (*.png)",
+			Pattern:     "*.png",
+		}},
+	})
+
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return nil
+	}
+
+	if len(path) > 0 {
+		if _, err := os.Stat(path); err != nil {
+			runtime.LogError(a.ctx, err.Error())
+			return nil
+		}
+	}
+	file, err := os.ReadFile(path)
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return nil
+	}
+	base64String := base64.StdEncoding.EncodeToString(file)
+	return &InitImageResult{
+		Path:        path,
+		Base64Image: "data:image/png;base64," + base64String,
+	}
 }

@@ -18,10 +18,10 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:     "stable diffusion desktop",
-		Width:     1024,
-		Height:    768,
-		MinHeight: 768,
-		MinWidth:  1024,
+		Width:     1080,
+		Height:    800,
+		MinWidth:  1080,
+		MinHeight: 800,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

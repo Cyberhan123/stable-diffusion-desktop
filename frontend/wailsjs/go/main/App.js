@@ -10,6 +10,10 @@ export function GetFilePath(arg1) {
   return window['go']['main']['App']['GetFilePath'](arg1);
 }
 
+export function GetInitImage() {
+  return window['go']['main']['App']['GetInitImage']();
+}
+
 export function GetOptions() {
   return window['go']['main']['App']['GetOptions']();
 }
