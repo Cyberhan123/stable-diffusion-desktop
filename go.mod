@@ -3,13 +3,13 @@ module github.com/cyberhan123/stable-diffusion-desktop
 go 1.21
 
 require (
-	github.com/seasonjs/stable-diffusion v0.1.4-0.20240116140801-8c85ffffcc8b
+	github.com/seasonjs/stable-diffusion v0.1.4-0.20240117161345-66dbdf443396
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/ebitengine/purego v0.6.0-alpha.2.0.20240113142936-a546a4d9ae4b // indirect
+	github.com/ebitengine/purego v0.6.0-alpha.3.0.20240117154336-babd452e909b // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect

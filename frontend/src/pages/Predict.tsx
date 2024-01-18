@@ -46,12 +46,12 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
     // OutputsImageType OutputsImageType
     const {runAsync: predict, loading: predictLoading, data: images} = useRequest(async (params) => {
         const fullParams = omit(params, ["Prompt", "RandomSeed"])
-        fullParams.Width = Number(fullParams.Width)
-        fullParams.Height = Number(fullParams.Height)
-        fullParams.SampleMethod = Number(fullParams.SampleMethod)
-        fullParams.SampleSteps = Number(fullParams.SampleSteps)
-        fullParams.Seed = Number(fullParams.Seed)
-        fullParams.BatchCount = Number(fullParams.BatchCount)
+        fullParams.Width = Number(fullParams?.Width ?? 256)
+        fullParams.Height = Number(fullParams.Height ?? 256)
+        fullParams.SampleMethod = Number(fullParams.SampleMethod ?? 0)
+        fullParams.SampleSteps = Number(fullParams.SampleSteps ?? 20)
+        fullParams.Seed = Number(fullParams.Seed ?? 42)
+        fullParams.BatchCount = Number(fullParams.BatchCount ?? 1)
         fullParams.OutputsImageType = "PNG"
         if (props.predictType === "text") {
             return await Predict(params.Prompt, fullParams)
@@ -215,45 +215,6 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                     {
                         props.predictType === "image" &&
                         <Form.Item label="Image" name="InitImage" style={{marginBottom: 0}}>
-                            {/*<Upload*/}
-                            {/*    accept={"image/png,image/jpeg"}*/}
-                            {/*    name="avatar"*/}
-                            {/*    listType="picture-card"*/}
-                            {/*    className="avatar-uploader"*/}
-                            {/*    showUploadList={false}*/}
-                            {/*    beforeUpload={async (file) => {*/}
-                            {/*        const isPNG = file.type === 'image/png';*/}
-                            {/*        if (!isPNG) {*/}
-                            {/*            setInitImage({*/}
-                            {/*                value: "",*/}
-                            {/*                validateStatus: "error",*/}
-                            {/*                errorMsg: "Please upload a PNG file"*/}
-                            {/*            })*/}
-                            {/*        } else {*/}
-                            {/*            const base64 = await getBase64(file)*/}
-                            {/*            setInitImage({*/}
-                            {/*                value: base64,*/}
-                            {/*                validateStatus: null,*/}
-                            {/*                errorMsg: null*/}
-                            {/*            })*/}
-                            {/*        }*/}
-                            {/*        return isPNG || Upload.LIST_IGNORE;*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    {(initImage?.value?.length > 0) ? <img*/}
-                            {/*            style={{width: "100%"}}*/}
-                            {/*            src={initImage.value}*/}
-                            {/*            alt={"initImage"}*/}
-                            {/*        /> :*/}
-                            {/*        <button style={{border: 0, background: 'none'}} type="button">*/}
-                            {/*            <PlusOutlined style={props?.isDark ? {color: "#fff"} : {}}/>*/}
-                            {/*            <div style={props?.isDark ? {*/}
-                            {/*                color: "#fff",*/}
-                            {/*                marginTop: 8*/}
-                            {/*            } : {marginTop: 8}}>Upload*/}
-                            {/*            </div>*/}
-                            {/*        </button>}*/}
-                            {/*</Upload>*/}
                             <Button
                                 type="dashed" style={{width: 100, height: 100}}
                                 onClick={async () => {
