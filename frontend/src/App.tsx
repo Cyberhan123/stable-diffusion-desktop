@@ -24,7 +24,6 @@ function App() {
         const result = await GetOptions();
         return result
     }, {
-        ready: !!open,
         refreshDeps: [open]
     })
     const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {

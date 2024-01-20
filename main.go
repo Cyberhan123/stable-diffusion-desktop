@@ -19,9 +19,9 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:     "stable diffusion desktop",
 		Width:     1080,
-		Height:    800,
+		Height:    864,
 		MinWidth:  1080,
-		MinHeight: 800,
+		MinHeight: 864,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

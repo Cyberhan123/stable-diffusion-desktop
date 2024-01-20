@@ -299,6 +299,9 @@ func (a *App) loadUserSetting() bool {
 	}
 
 	a.options = &settings
+	if a.options.Threads <= 0 {
+		a.options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
+	}
 	return true
 }
 

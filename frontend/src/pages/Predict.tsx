@@ -1,7 +1,7 @@
 import ImageGallery from "../components/ImageGallery";
 import {useRequest} from "ahooks";
 import {GetInitImage, Predict, PredictImage} from "../../wailsjs/go/main/App";
-import {Button, Col, Collapse, CollapseProps, Flex, Form, Input, Row, Select, Slider} from "antd";
+import {Button, Col, Collapse, CollapseProps, Flex, Form, Input, InputNumber, Row, Select, Slider} from "antd";
 import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 import {PlaySquareOutlined, PlusOutlined, RedoOutlined} from "@ant-design/icons";
@@ -31,9 +31,6 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
         errorMsg: null
     })
 
-    useEffect(() => {
-
-    }, [props.predictType])
     // NegativePrompt   string
     // ClipSkip         int
     // CfgScale         float32
@@ -57,6 +54,7 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
         if (props.predictType === "text") {
             return await Predict(params.Prompt, fullParams)
         }
+        fullParams.Strength = Number(fullParams.Strength ?? 0.75)
         return await PredictImage(initImage?.path ?? "", params.Prompt, fullParams)
     }, {
         manual: true
@@ -72,12 +70,12 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                     <Row justify={"space-between"}>
                         <Col span={10}>
                             <Form.Item label={"width"} name={"Width"}>
-                                <Input type={"number"} min={128} max={1024} step={128}/>
+                                <InputNumber type={"number"} min={128} max={1024} step={128}/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item label={"height"} name={"Height"}>
-                                <Input type={"number"} min={128} max={1024} step={128}/>
+                                <InputNumber type={"number"} min={128} max={1024} step={128}/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -86,7 +84,7 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                     <Row justify={"space-between"}>
                         <Col span={10}>
                             <Form.Item label={"Seed"} name={"Seed"}>
-                                <Input type={"number"}/>
+                                <Input/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -101,6 +99,11 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                         </Col>
                     </Row>
                 </Form.Item>
+                {
+                    props?.predictType === "image" && <Form.Item label={"Strength"} name={"Strength"}>
+                        <InputNumber min={0.01} max={1} step={0.01}/>
+                    </Form.Item>
+                }
             </>,
         },
         {
@@ -209,7 +212,8 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                         SampleMethod: 0,
                         SampleSteps: 20,
                         Seed: 42,
-                        BatchCount: 1
+                        BatchCount: 1,
+                        Strength: 0.75,
                     }}
                     layout="vertical"
                 >
