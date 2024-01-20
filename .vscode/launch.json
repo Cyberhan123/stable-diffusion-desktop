@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Wails: Debug Window",
+            "type": "go",
+            "request": "launch",
+            "mode": "exec",
+            "program": "${workspaceFolder}/build/bin/vscode-debug-windows.exe",
+            "preLaunchTask": "build debug windows",
+            "cwd": "${workspaceFolder}",
+            "env": {}
+        },
+        {
+            "name": "Wails: Debug Darwin",
+            "type": "go",
+            "request": "launch",
+            "mode": "exec",
+            "program": "${workspaceFolder}/build/bin/vscode-debug-darwin",
+            "preLaunchTask": "build debug darwin",
+            "cwd": "${workspaceFolder}",
+            "env": {}
+        }
+    ]
+}

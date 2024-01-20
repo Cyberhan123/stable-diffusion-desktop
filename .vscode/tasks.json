@@ -1,0 +1,68 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "dev",
+        "type": "shell",
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "command": "wails",
+        "args": [
+          "dev",
+        ],
+      },
+      {
+        "label": "pnpm run build",
+        "type": "shell",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend"
+        },
+        "command": "pnpm",
+        "args": [
+          "run",
+          "build"
+        ],
+        "problemMatcher": []
+      },
+      {
+        "label": "build debug darwin",
+        "type": "shell",
+        "options": {
+          "cwd": "${workspaceFolder}",
+          "env": {
+            "CGO_LDFLAGS": "-framework UniformTypeIdentifiers",
+          }
+        },
+        "command": "go",
+        "args": [
+          "build",
+          "-tags",
+          "dev",
+          "-gcflags",
+          "all=-N -l",
+          "-o",
+          "build/bin/vscode-debug-darwin",
+        ],
+        "dependsOn": ["pnpm run build"]
+      },
+      {
+        "label": "build debug windows",
+        "type": "shell",
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "command": "go",
+        "args": [
+          "build",
+          "-tags",
+          "dev",
+          "-gcflags",
+          "all=-N -l",
+          "-o",
+          "build/bin/vscode-debug-windows.exe",
+        ],
+        "dependsOn": ["pnpm run build"]
+      }
+    ]
+  }

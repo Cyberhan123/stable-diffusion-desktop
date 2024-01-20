@@ -112,13 +112,18 @@ func (a *App) PredictImage(initImage, prompt string, params sd.FullParams) []str
 	if !a.modelLoaded {
 		return nil
 	}
-	decodedBytes, err := base64.StdEncoding.DecodeString(initImage)
+
+	if len(initImage) == 0 {
+		return nil
+	}
+
+	file, err := os.ReadFile(initImage)
 	if err != nil {
 		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
 
-	reader := bytes.NewReader(decodedBytes)
+	reader := bytes.NewReader(file)
 
 	var writers []io.Writer
 	for i := 0; i < params.BatchCount; i++ {
@@ -205,7 +210,11 @@ func (a *App) SaveImage(imageBase64 string) bool {
 		return false
 	}
 
-	file, err := os.Create(dialog + ".png")
+	if filepath.Ext(dialog) != ".png" {
+		dialog += ".png"
+	}
+
+	file, err := os.Create(dialog)
 	if err != nil {
 		_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
 			Type:    runtime.InfoDialog,
@@ -333,6 +342,38 @@ func (a *App) defaultUserSetting() *sd.Options {
 	return &options
 }
 
-func (a *App) StartBackend() {
+type InitImageResult struct {
+	Path        string
+	Base64Image string
+}
 
+func (a *App) GetInitImage() *InitImageResult {
+	path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Filters: []runtime.FileFilter{{
+			DisplayName: "Image Files (*.png)",
+			Pattern:     "*.png",
+		}},
+	})
+
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return nil
+	}
+
+	if len(path) > 0 {
+		if _, err := os.Stat(path); err != nil {
+			runtime.LogError(a.ctx, err.Error())
+			return nil
+		}
+	}
+	file, err := os.ReadFile(path)
+	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
+		return nil
+	}
+	base64String := base64.StdEncoding.EncodeToString(file)
+	return &InitImageResult{
+		Path:        path,
+		Base64Image: "data:image/png;base64," + base64String,
+	}
 }

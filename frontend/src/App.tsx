@@ -11,7 +11,7 @@ import Settings from "./components/Settings";
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
 function App() {
-    const [model, setModel] = useState<string | number>(1)
+    const [model, setModel] = useState<string | number>("text")
     const [hasLoadModel, setHasLoadModel] = useState(false)
     const [open, setOpen] = useState(false);
     const [isDark, setIsDark] = useState<boolean>(window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false);
@@ -31,13 +31,13 @@ function App() {
                                 setModel(value)
                             }}
                             options={[
-                                {label: 'Text Predict Image', value: 1, icon: <FontColorsOutlined/>},
-                                // {label: 'Image Predict Image', value: 2, icon: <FileImageOutlined/>},
+                                {label: 'Text Predict Image', value: "text", icon: <FontColorsOutlined/>},
+                                {label: 'Image Predict Image', value: "image", icon: <FileImageOutlined/>},
                             ]}
                         />
                         <Space size={12}>
                             <Button
-                                icon={<FileOutlined />}
+                                icon={<FileOutlined/>}
                                 loading={loadModelLoading}
                                 onClick={async () => {
                                     const result = await loadModel()
@@ -49,10 +49,10 @@ function App() {
                                 Select Model
                             </Button>
                             <Button
-                                icon={<SettingOutlined />}
+                                icon={<SettingOutlined/>}
                                 onClick={() => {
-                                setOpen(true)
-                            }}>
+                                    setOpen(true)
+                                }}>
                                 Settings
                             </Button>
                             <Button onClick={() => setIsDark((prevState) => !prevState)}>
@@ -60,9 +60,7 @@ function App() {
                             </Button>
                         </Space>
                     </Flex>
-                    {
-                        model === 1 && <Predict hasLoadModel={hasLoadModel}/>
-                    }
+                    <Predict hasLoadModel={hasLoadModel} predictType={model} isDark={isDark}/>
                     <Settings
                         open={open}
                         onClose={() => {
