@@ -34,15 +34,14 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
+	a.ctx = ctx
+
 	a.options = a.defaultUserSetting()
-
 	a.loadUserSetting()
-
 	model, err := sd.NewAutoModel(*a.options)
 	if err != nil {
 		runtime.LogError(ctx, err.Error())
 	}
-	a.ctx = ctx
 	a.sd = model
 	a.sd.SetLogCallback(func(level sd.LogLevel, text string) {
 		runtime.EventsEmit(ctx, "log", level, text)
@@ -342,6 +341,7 @@ func (a *App) defaultUserSetting() *sd.Options {
 	options.GpuEnable = false
 	options.FreeParamsImmediately = false
 	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
+	options.Wtype = sd.COUNT
 	return &options
 }
 

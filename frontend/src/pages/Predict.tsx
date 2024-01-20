@@ -5,7 +5,7 @@ import {Button, Col, Collapse, CollapseProps, Flex, Form, Input, InputNumber, Ro
 import Terminal from "../components/Terminal";
 import {omit} from "lodash-es";
 import {PlaySquareOutlined, PlusOutlined, RedoOutlined} from "@ant-design/icons";
-import {FC, useEffect, useState} from "react";
+import {FC, useState} from "react";
 
 import './Predict.css';
 

@@ -24,7 +24,7 @@ const ImageGallery: FC<ImageGalleryProps> = ({images, loading}) => {
         return await SaveImage(image)
     }, {manual: true})
 
-    return <Spin tip="Loading..." spinning={loading}>
+    return <Spin tip="Predicting..." spinning={loading}>
         <div className="image-gallery">
             {
                 images?.length > 0 && <>
