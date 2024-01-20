@@ -17,3 +17,5 @@ export function PredictImage(arg1:string,arg2:string,arg3:sd.FullParams):Promise
 export function SaveImage(arg1:string):Promise<boolean>;
 
 export function SetOptions(arg1:sd.Options):Promise<void>;
+
+export function StartBackend():Promise<void>;

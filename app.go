@@ -332,3 +332,7 @@ func (a *App) defaultUserSetting() *sd.Options {
 	options.Threads = goruntime.NumCPU() - 2 // 2 threads for rest of the system
 	return &options
 }
+
+func (a *App) StartBackend() {
+
+}

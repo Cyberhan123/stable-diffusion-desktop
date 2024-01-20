@@ -33,3 +33,7 @@ export function SaveImage(arg1) {
 export function SetOptions(arg1) {
   return window['go']['main']['App']['SetOptions'](arg1);
 }
+
+export function StartBackend() {
+  return window['go']['main']['App']['StartBackend']();
+}

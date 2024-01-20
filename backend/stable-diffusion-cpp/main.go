@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"github.com/cyberhan123/stable-diffusion-desktop/backend/stable-diffusion-cpp/api"
-	"github.com/seasonjs/stable-diffusion"
+	sd "github.com/seasonjs/stable-diffusion"
 	"io"
 	"log"
 	"net"
