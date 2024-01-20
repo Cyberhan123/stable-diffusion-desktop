@@ -15,6 +15,7 @@ type PredictImageProps = {
     predictType: string | number
     hasLoadModel: boolean
     isDark: boolean
+    loading: boolean
 }
 const PredictImageFC: FC<PredictImageProps> = (props) => {
     const [form] = Form.useForm();
@@ -48,7 +49,7 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
         const fullParams = omit(params, ["Prompt", "RandomSeed"])
         fullParams.Width = Number(fullParams?.Width ?? 256)
         fullParams.Height = Number(fullParams.Height ?? 256)
-        fullParams.SampleMethod = Number(fullParams.SampleMethod ?? 0)
+        fullParams.SampleMethod = Number(fullParams.SampleMethod)
         fullParams.SampleSteps = Number(fullParams.SampleSteps ?? 20)
         fullParams.Seed = Number(fullParams.Seed ?? 42)
         fullParams.BatchCount = Number(fullParams.BatchCount ?? 1)
@@ -253,7 +254,7 @@ const PredictImageFC: FC<PredictImageProps> = (props) => {
                     </Form.Item>
                     <Form.Item style={{marginBottom: 0}}>
                         <Button
-                            loading={predictLoading}
+                            loading={predictLoading || props?.loading}
                             icon={<PlaySquareOutlined/>}
                             type="primary"
                             size={"large"}

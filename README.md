@@ -8,6 +8,10 @@ Minimalist stable-diffusion desktop application with only one executable file (N
 
 **It is currently in preview, so there may be many issues. Feedback is welcome.**
 
+## Origin of the project
+
+If you are interested, you can take a look at the [origin of the project](./docs/origin.md).
+
 ## User Guide
 Download the latest release from [here](https://github.com/Cyberhan123/stable-diffusion-desktop/releases/latest)
 
@@ -20,6 +24,7 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 - Full Nvidia ( CUDA12 ) GPU backend for GPU acceleration (Windows Only) and AMD GPU (Windows Only) come soon.
 - Can load ckpt, safetensors, gguf and diffusers models/checkpoints. 
 - Auto detect dark mode/ light mode
+- Text Predict and Image Predict (up scaling come soon)
 - Sampling method
     - `Euler A`
     - `Euler`
@@ -32,8 +37,7 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 
 ## TODO
 - [ ] UI improvements
-- [ ] More acceleration platform support 
-- [ ] Image to Image support
+- [ ] More acceleration platform support
 - [ ] Upscaling support
 - [ ] Remote server support
 - [ ] terminal show full progress bar

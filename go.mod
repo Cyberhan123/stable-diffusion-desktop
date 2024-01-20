@@ -9,7 +9,7 @@ require (
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/ebitengine/purego v0.6.0-alpha.3.0.20240117154336-babd452e909b // indirect
+	github.com/ebitengine/purego v0.6.0-alpha.3.0.20240117155942-d2ab45a294a4 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.5.0 // indirect
