@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-#          { name: stable-diffusion-desktop, platform: linux/amd64, os: ubuntu-latest },
+          { name: stable-diffusion-desktop, platform: linux/amd64, os: ubuntu-latest },
           { name: stable-diffusion-desktop, platform: windows/amd64, os: windows-latest },
           { name: stable-diffusion-desktop, platform: darwin/universal, os: macos-latest }
         ]
