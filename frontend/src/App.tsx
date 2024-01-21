@@ -14,6 +14,7 @@ import {GetOptions, LoadFromFile, SetOptions} from "../wailsjs/go/main/App";
 import Settings from "./pages/Settings";
 
 import './App.css'
+import ModelHub from "./pages/ModelHub";
 
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
@@ -98,7 +99,10 @@ function App() {
                         <Predict hasLoadModel={hasLoadModel} predictType={tab} isDark={isDark}
                                  loading={loadModelLoading || optionsLoading || setOptionsLoading}/>
                     }
-
+                    {
+                        tab === "model" &&
+                        <ModelHub/>
+                    }
                     <Settings
                         open={open}
                         optionsLoading={setOptionsLoading || optionsLoading || loadModelLoading}

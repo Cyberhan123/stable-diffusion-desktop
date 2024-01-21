@@ -25,6 +25,7 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 - Can load ckpt, safetensors, gguf and diffusers models/checkpoints. 
 - Auto detect dark mode/ light mode
 - Text Predict and Image Predict (up scaling come soon)
+- TAESD support
 - Sampling method
     - `Euler A`
     - `Euler`
@@ -41,7 +42,6 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 - [ ] Upscaling support
 - [ ] Remote server support
 - [ ] terminal show full progress bar
-- [ ] TAESD support
 - [ ] auto download model/checkpoint/lora
 - [ ] auto update
 - [ ] plugin support
