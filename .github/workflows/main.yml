@@ -78,7 +78,6 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           wails build --platform ${{ matrix.build.platform }} -webview2 download -nsis -o ${{ matrix.build.name }}
-          Rename-Item -Path "${{ matrix.build.name }}" -NewName "${{ matrix.build.name }}.exe"
 
       - name: Build .app zip file
         if: runner.os == 'macOS'
