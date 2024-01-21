@@ -71,13 +71,13 @@ jobs:
 
       - name: Build Linux App
         if:  runner.os == 'Linux'
-        run: wails build --platform ${{ matrix.build.platform }} -webview2 download -o ${{ matrix.build.name }}
+        run: wails build --platform ${{ matrix.build.platform }} -webview2 download
         shell: bash
 
       - name: Build Windows App + Installer
         if: runner.os == 'Windows'
         run: |
-          wails build --platform ${{ matrix.build.platform }} -webview2 download -nsis -o ${{ matrix.build.name }}
+          wails build --platform ${{ matrix.build.platform }} -webview2 download -nsis
 
       - name: Build .app zip file
         if: runner.os == 'macOS'
