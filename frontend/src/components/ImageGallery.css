@@ -27,3 +27,64 @@
 .ant-image-preview-mask{
     background-color: rgba(0, 0, 0, 0.8);
 }
+
+.image-gallery {
+    min-width: 300px;
+    min-height: 450px;
+    padding: 5px;
+}
+
+.image-gallery img {
+    border-radius: 5px;
+}
+
+.image-gallery .preview {
+    display: inline-block;
+    max-height: 100%;
+    margin: 1%;
+}
+
+.image-gallery .image-preview {
+    height: 85%;
+}
+
+.image-preview img {
+    height: 100%;
+}
+
+.image-info {
+    display: none;
+}
+
+.show-info {
+    width: calc(100% - 5px);
+    height: calc(100% - 5px);
+    position: absolute;
+    padding-left: 5px;
+    padding-top: 5px;
+    border-radius: 5px;
+    color: white;
+    background-image: linear-gradient(to bottom, black, transparent);
+}
+
+.image-gallery ul {
+    display: inline-block;
+    vertical-align: top;
+    width: 15%;
+    list-style: none;
+    padding: 1%;
+    max-height: 100%;
+    overflow-y: scroll;
+}
+
+.image-gallery li {
+    width: 100%;
+}
+
+.image-gallery li img {
+    width: 100%;
+}
+
+.image-gallery li .selected {
+    border: 2px solid #0363f2;
+}

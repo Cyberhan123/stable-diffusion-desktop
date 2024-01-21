@@ -58,9 +58,10 @@ const Settings: FC<SettingsProps> = (props) => {
         closable={false}
         open={props?.open}
         onClose={async () => {
-            if (!isEqual(form.getFieldsValue(), props.options)) {
-                await props.onOptionsChange(form.getFieldsValue())
-            }
+            // if (!isEqual(form.getFieldsValue(), props.options)) {
+            //     await props.onOptionsChange(form.getFieldsValue())
+            // }
+            await props.onOptionsChange(form.getFieldsValue())
             props.onClose()
         }}
     >
@@ -175,6 +176,7 @@ const Settings: FC<SettingsProps> = (props) => {
                     name="Wtype">
                     <Select
                         options={[
+                            {label: 'Auto', value: 19},
                             {label: 'F32', value: 0},
                             {label: 'F16', value: 1},
                             {label: 'Q4_0', value: 2},
@@ -221,6 +223,12 @@ const Settings: FC<SettingsProps> = (props) => {
                 <Form.Item
                     label={"GPU Enable"}
                     name={"GpuEnable"}>
+                    <Switch disabled={env?.platform != "windows"}/>
+                </Form.Item>
+                <Form.Item
+                    label={"Http Proxy"}
+                    name={"Proxy"}
+                >
                     <Switch disabled={env?.platform != "windows"}/>
                 </Form.Item>
             </Form>

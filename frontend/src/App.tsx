@@ -1,17 +1,25 @@
 import {useState} from 'react';
 import {App as AntdApp, Button, ConfigProvider, Flex, Layout, Segmented, Space, theme} from "antd";
-import {AlertOutlined, FileImageOutlined, FileOutlined, FontColorsOutlined, SettingOutlined} from "@ant-design/icons";
+import {
+    AlertOutlined,
+    // DownloadOutlined,
+    FileImageOutlined,
+    FileOutlined,
+    FontColorsOutlined,
+    SettingOutlined
+} from "@ant-design/icons";
 import Predict from "./pages/Predict";
 import {useRequest} from "ahooks";
 import {GetOptions, LoadFromFile, SetOptions} from "../wailsjs/go/main/App";
-import Settings from "./components/Settings";
+import Settings from "./pages/Settings";
 
 import './App.css'
+import ModelHub from "./pages/ModelHub";
 
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
 function App() {
-    const [model, setModel] = useState<string | number>("text")
+    const [tab, setTab] = useState<string | number>("text")
     const [hasLoadModel, setHasLoadModel] = useState(false)
     const [open, setOpen] = useState(false);
     const [isDark, setIsDark] = useState<boolean>(window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false);
@@ -21,10 +29,8 @@ function App() {
         manual: true
     })
     const {data: options, loading: optionsLoading} = useRequest(async () => {
-        const result = await GetOptions();
-        return result
+        return await GetOptions();
     }, {
-        ready: !!open,
         refreshDeps: [open]
     })
     const {runAsync: setOptions, loading: setOptionsLoading} = useRequest(async (params) => {
@@ -38,9 +44,9 @@ function App() {
                 <Layout.Content style={{height: "100vh", padding: 12}}>
                     <Flex justify={"space-between"}>
                         <Segmented
-                            value={model}
+                            value={tab}
                             onChange={async (value) => {
-                                setModel(value)
+                                setTab(value)
                                 if (value === "text") {
                                     await setOptions({
                                         ...options,
@@ -57,6 +63,7 @@ function App() {
                             options={[
                                 {label: 'Text Predict Image', value: "text", icon: <FontColorsOutlined/>},
                                 {label: 'Image Predict Image', value: "image", icon: <FileImageOutlined/>},
+                                // {label: 'Model Hub', value: "model", icon: <DownloadOutlined/>},
                             ]}
                         />
                         <Space size={12}>
@@ -87,7 +94,15 @@ function App() {
                             </Button>
                         </Space>
                     </Flex>
-                    <Predict hasLoadModel={hasLoadModel} predictType={model} isDark={isDark} loading={loadModelLoading || optionsLoading || setOptionsLoading}/>
+                    {
+                        (tab === "text" || tab === "image") &&
+                        <Predict hasLoadModel={hasLoadModel} predictType={tab} isDark={isDark}
+                                 loading={loadModelLoading || optionsLoading || setOptionsLoading}/>
+                    }
+                    {
+                        tab === "model" &&
+                        <ModelHub/>
+                    }
                     <Settings
                         open={open}
                         optionsLoading={setOptionsLoading || optionsLoading || loadModelLoading}

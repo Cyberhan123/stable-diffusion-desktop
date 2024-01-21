@@ -3,7 +3,8 @@ module github.com/cyberhan123/stable-diffusion-desktop
 go 1.21
 
 require (
-	github.com/seasonjs/stable-diffusion v0.1.4-0.20240117161345-66dbdf443396
+	github.com/seasonjs/hf-hub v0.0.3
+	github.com/seasonjs/stable-diffusion v0.2.0
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 
@@ -22,10 +23,12 @@ require (
 	github.com/leaanthony/u v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/samber/lo v1.39.0 // indirect
+	github.com/schollz/progressbar/v3 v3.14.1 // indirect
 	github.com/tkrajina/go-reflector v0.5.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
@@ -35,5 +38,6 @@ require (
 	golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/term v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )

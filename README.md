@@ -21,10 +21,12 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 - 16-bit, 32-bit float and 4-bit, 5-bit, 8-bit integer quantization support
 - Accelerated memory-efficient CPU inference
 - Auto-detect CPU and GPU and cross-platform support
-- Full Nvidia ( CUDA12 ) GPU backend for GPU acceleration (Windows Only) and AMD GPU (Windows Only) come soon.
+- Full Nvidia ( CUDA12 ) GPU backend and AMD GPU for GPU acceleration, Windows only.
+  - Note: AMD GPU support is experimental and may not work properly and must set correct `weight type` By your self, don't use `Auto` option!!.
 - Can load ckpt, safetensors, gguf and diffusers models/checkpoints. 
 - Auto detect dark mode/ light mode
 - Text Predict and Image Predict (up scaling come soon)
+- TAESD support
 - Sampling method
     - `Euler A`
     - `Euler`
@@ -41,7 +43,6 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 - [ ] Upscaling support
 - [ ] Remote server support
 - [ ] terminal show full progress bar
-- [ ] TAESD support
 - [ ] auto download model/checkpoint/lora
 - [ ] auto update
 - [ ] plugin support
@@ -49,7 +50,7 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 
 ## UI Preview
 <p align="center">
-  <img src="./assets/sd_desktop_light.png" width="768x">
+  <img src="assets/sd_desktop_dark.png" width="768x">
 </p>
 <p align="center">
   <img src="./assets/sd_desktop_dark.png" width="768x">

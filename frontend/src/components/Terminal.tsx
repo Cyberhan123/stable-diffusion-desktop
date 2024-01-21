@@ -17,7 +17,7 @@ const Terminal = () => {
                     return;
                 }
                 terminal.current.write(`${text}\r`);
-                terminal.current?.flush?.();
+                terminal.current?.refresh?.(0, terminal.current?.rows - 1);
             }
             console.log(text)
         });
