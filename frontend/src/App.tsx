@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {App as AntdApp, Button, ConfigProvider, Flex, Layout, Segmented, Space, theme} from "antd";
 import {
     AlertOutlined,
-    DownloadOutlined,
+    // DownloadOutlined,
     FileImageOutlined,
     FileOutlined,
     FontColorsOutlined,
@@ -63,7 +63,7 @@ function App() {
                             options={[
                                 {label: 'Text Predict Image', value: "text", icon: <FontColorsOutlined/>},
                                 {label: 'Image Predict Image', value: "image", icon: <FileImageOutlined/>},
-                                {label: 'Model Hub', value: "model", icon: <DownloadOutlined/>},
+                                // {label: 'Model Hub', value: "model", icon: <DownloadOutlined/>},
                             ]}
                         />
                         <Space size={12}>

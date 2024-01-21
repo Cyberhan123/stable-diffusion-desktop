@@ -41,6 +41,7 @@ const ImageGallery: FC<ImageGalleryProps> = ({images, loading}) => {
                             <Image.PreviewGroup
                                 items={images}
                                 preview={{
+                                    current: currentImage,
                                     toolbarRender: (
                                         _,
                                         {
