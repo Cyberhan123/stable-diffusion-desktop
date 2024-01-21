@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/seasonjs/hf-hub v0.0.3
-	github.com/seasonjs/stable-diffusion v0.1.4-0.20240117161345-66dbdf443396
+	github.com/seasonjs/stable-diffusion v0.2.0
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 

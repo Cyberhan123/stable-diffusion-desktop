@@ -58,9 +58,10 @@ const Settings: FC<SettingsProps> = (props) => {
         closable={false}
         open={props?.open}
         onClose={async () => {
-            if (!isEqual(form.getFieldsValue(), props.options)) {
-                await props.onOptionsChange(form.getFieldsValue())
-            }
+            // if (!isEqual(form.getFieldsValue(), props.options)) {
+            //     await props.onOptionsChange(form.getFieldsValue())
+            // }
+            await props.onOptionsChange(form.getFieldsValue())
             props.onClose()
         }}
     >

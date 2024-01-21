@@ -53,8 +53,8 @@ github.com/schollz/progressbar/v3 v3.14.1 h1:VD+MJPCr4s3wdhTc7OEJ/Z3dAeBzJ7yKH/P
 github.com/schollz/progressbar/v3 v3.14.1/go.mod h1:Zc9xXneTzWXF81TGoqL71u0sBPjULtEHYtj/WVgVy8E=
 github.com/seasonjs/hf-hub v0.0.3 h1:CUtkyuOjbIGFpvQtRxqFP24rF8GVIvxnJjM478jsG6s=
 github.com/seasonjs/hf-hub v0.0.3/go.mod h1:bIgK32RZh/Zn6FYeTvfIttO19hEmfNz0QdaPqFG1UIA=
-github.com/seasonjs/stable-diffusion v0.1.4-0.20240117161345-66dbdf443396 h1:eIOWGo8Ra0ISCGMdg8iqiqT1T6QLBgnYceoNfE9Adyg=
-github.com/seasonjs/stable-diffusion v0.1.4-0.20240117161345-66dbdf443396/go.mod h1:8eeP0rUb1vE19laPLU70A6REABkoBdd0rixwJC3hoHQ=
+github.com/seasonjs/stable-diffusion v0.2.0 h1:hQ+2pRloif3kZrIHBI379rtr4Juv+9mbEC6m7E3+7sE=
+github.com/seasonjs/stable-diffusion v0.2.0/go.mod h1:8eeP0rUb1vE19laPLU70A6REABkoBdd0rixwJC3hoHQ=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
