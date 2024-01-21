@@ -50,9 +50,6 @@ Download the latest release from [here](https://github.com/Cyberhan123/stable-di
 
 ## UI Preview
 <p align="center">
-  <img src="assets/sd_desktop_dark.png" width="768x">
-</p>
-<p align="center">
   <img src="./assets/sd_desktop_dark.png" width="768x">
 </p>
 
