@@ -76,6 +76,7 @@ const Settings: FC<SettingsProps> = (props) => {
                     name="VaePath"
                 >
                     <Button
+                        type={"link"}
                         onClick={async () => {
                             const path = await GetFilePath("Select Vae Path")
                             if (path?.length > 0) {
@@ -84,6 +85,14 @@ const Settings: FC<SettingsProps> = (props) => {
                         }}
                     >
                         Select Vae Path
+                    </Button>
+                    <Button
+                        type={"link"}
+                        onClick={async () => {
+                            form.setFieldValue("VaePath", "")
+                        }}
+                    >
+                        Clear Vae Path
                     </Button>
                     <Input
                         value={VaePath}
@@ -96,6 +105,7 @@ const Settings: FC<SettingsProps> = (props) => {
                     name="TaesdPath"
                 >
                     <Button
+                        type={"link"}
                         onClick={async () => {
                             const path = await GetFilePath("Select Taesd Path")
                             if (path?.length > 0) {
@@ -104,6 +114,14 @@ const Settings: FC<SettingsProps> = (props) => {
                         }}
                     >
                         Select Taesd Path
+                    </Button>
+                    <Button
+                        type={"link"}
+                        onClick={async () => {
+                            form.setFieldValue("TaesdPath", "")
+                        }}
+                    >
+                        Clear Taesd Path
                     </Button>
                     <Input
                         value={TaesdPath}
@@ -116,6 +134,7 @@ const Settings: FC<SettingsProps> = (props) => {
                     name="LoraModelDir"
                 >
                     <Button
+                        type={"link"}
                         onClick={async () => {
                             const path = await GetDirPath("Lora Model Dir")
                             if (path?.length > 0) {
@@ -123,7 +142,15 @@ const Settings: FC<SettingsProps> = (props) => {
                             }
                         }}
                     >
-                        Select Lora Model Dir
+                        Select Lora Dir
+                    </Button>
+                    <Button
+                        type={"link"}
+                        onClick={async () => {
+                            form.setFieldValue("LoraModelDir", "")
+                        }}
+                    >
+                        Clear Lora Dir
                     </Button>
                     <Input
                         value={LoraModelDir}

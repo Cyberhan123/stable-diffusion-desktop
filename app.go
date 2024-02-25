@@ -150,7 +150,7 @@ func (a *App) GetOptions() sd.Options {
 }
 
 func (a *App) SetOptions(option sd.Options) {
-	runtime.LogDebug(a.ctx, fmt.Sprintf("%+v", *a.options))
+	runtime.LogDebug(a.ctx, fmt.Sprintf("%#v", *a.options))
 	a.options = &option
 	if a.modelLoaded || len(a.modelPath) > 0 {
 		a.sd.SetOptions(option)
