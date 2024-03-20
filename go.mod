@@ -3,6 +3,7 @@ module github.com/cyberhan123/stable-diffusion-desktop
 go 1.21
 
 require (
+	github.com/fstanis/screenresolution v0.0.0-20190527020317-869904d15333
 	github.com/seasonjs/hf-hub v0.0.3
 	github.com/seasonjs/stable-diffusion v0.2.0
 	github.com/wailsapp/wails/v2 v2.7.1
@@ -21,6 +22,7 @@ require (
 	github.com/leaanthony/gosod v1.0.3 // indirect
 	github.com/leaanthony/slicer v1.6.0 // indirect
 	github.com/leaanthony/u v1.1.1 // indirect
+	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
